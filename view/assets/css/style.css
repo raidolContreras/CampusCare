@@ -15888,6 +15888,15 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.menu-top.active {
+  color: #B0CED0 !important;
+  background-color: #2A7E5D !important;
+  border-color: #2A7E5D !important;
+  transition: all 0.5s ease-in-out;
+  border-radius: 10px 10px 10px 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .fc-scrollgrid-sync-inner {
   cursor: pointer;
 }

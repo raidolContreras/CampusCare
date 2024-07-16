@@ -23,7 +23,13 @@
 		<span class="close-btn" onclick="closeMenu('navbarNav')"></span>
 				<ul class="navbar-nav mt-5">
 			<li class="nav-item mt-5">
+				<?php
+					echo $_SESSION["user"]['role'];
+				?>
 				<h5>
+				<?php
+					echo $_SESSION["user"]['name'];
+				?>
 				</h5>
 			</li>
 			<li class="nav-item">
