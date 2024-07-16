@@ -1,15 +1,6 @@
 <?php
-
-Class ControllerTemplate{
-
-	/*=============================================
-	Llamada a la plantilla
-	=============================================*/
-
-	public function ctrBringTemplate(){
-
-		include "view/dashboard.php";
-
-	}
-
+class ControllerTemplate {
+    public function ctrBringTemplate() {
+        include "view/dashboard.php";
+    }
 }

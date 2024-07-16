@@ -1,32 +1,44 @@
 <?php
-
 session_start();
 
-// Validar y obtener la página solicitada
 $pagina = filter_input(INPUT_GET, 'pagina', FILTER_SANITIZE_STRING);
 $pagina = $pagina ? $pagina : 'inicio';
 
+
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['logged'])) {
-    includeUserPages($pagina);
-} else {
-
+    // Si no está logueado, mostrar página de login
+    if ($pagina == 'login') {
+        include_once 'view/pages/login.php';
+    } else {
+        // Si intenta acceder a otra página sin loguearse, redirigir al login
+        header("Location: login");
+        exit();
+    }
+}else {
+    includeAuthPages($pagina);
 }
 
-// Función para incluir páginas de usuarios
 function includeUserPages($pagina) {
     include 'view/pages/navs/header.php';
     include 'view/js.php';
-        includeCommonComponents();
+    includeCommonComponents();
     include 'view/pages/' . $pagina . '.php';
 }
 
-// Función para incluir componentes comunes
+function includeAuthPages($pagina) {
+    $whitelist = ['inicio', 'users', 'events', 'event_types', 'students', 'register_event'];
+    if (in_array($pagina, $whitelist)) {
+        includeUserPages($pagina);
+    } else {
+        includeError404();
+    }
+}
+
 function includeCommonComponents() {
     include 'view/pages/navs/sidebar.php';
 }
 
-// Función para incluir página de error 404
 function includeError404() {
-    include 'error404.php';
+    include 'view/pages/error404.php';
 }

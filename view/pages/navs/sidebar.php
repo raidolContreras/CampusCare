@@ -22,6 +22,14 @@
                             <div class="col-8">Usuarios</div> 
                         </div>
                     </a>
+                    <a href="students" class="mt-1 menu-top py-2">
+                        <div class="row">
+                            <div class="col-2">
+                                <i class="fa-duotone fa-users"></i> 
+                            </div>
+                            <div class="col-8">Estudiantes</div> 
+                        </div>
+                    </a>
                 </div>
             </nav>
 	    </div>

@@ -64,7 +64,7 @@ function logout() {
         url: 'controller/ajax/logout.php',
         success: function(response) {
             if (response === 'ok') {
-                window.location.href = '?pagina=login';
+                window.location.href = 'login';
             } else {
                 alert('Error al intentar cerrar sesión. Inténtalo de nuevo más tarde.');
             }

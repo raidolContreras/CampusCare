@@ -1,34 +1,28 @@
 <!DOCTYPE html>
-<html lang="zxx">
-
+<html lang="es">
 <head>
-	<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-	<title>UNIMO - Servicio social</title>
-	<?php include "css.php"; ?>
+    <meta charset="UTF-8">
+    <title>UNIMO - Servicio Social</title>
+    <?php include "css.php"; ?>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 </head>
-
 <body>
-<div class="loader-section">
-     <span class="loader"></span>
-</div>
-<?php
-    include 'whiteList.php';
-?>
+    <div class="loader-section">
+        <span class="loader"></span>
+    </div>
+    <?php include 'whitelist.php'; ?>
+    <script src="view/assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.onload = pageLoaded();
 
-<script src="view/assets/js/bootstrap.bundle.min.js"></script>
-<script>
+        function pageLoaded() {
+            let loaderSection = document.querySelector('.loader-section');
+            loaderSection.classList.add('loaded');
+        }
 
-    document.onload = pageLoaded();
-
-    function pageLoaded() {
-        let loaderSection = document.querySelector('.loader-section');
-        loaderSection.classList.add('loaded');
-    }
-
-    function closeModal(modal) {
-        $('#' + modal).modal('hide');
-    }
-
-</script>
-
+        function closeModal(modal) {
+            $('#' + modal).modal('hide');
+        }
+    </script>
+</body>
 </html>
