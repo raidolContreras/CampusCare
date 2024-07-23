@@ -17,15 +17,10 @@ $(document).ready(function() {
                 "data": null,
                 "render": function (data, type, row) {
                     return `
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-                                Acciones
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li><a class="dropdown-item" href="#" onclick="editUser(${data.id})">Editar</a></li>
-                                <li><a class="dropdown-item" href="#" onclick="deleteUser(${data.id})">Eliminar</a></li>
-                            </ul>
-                        </div>`;
+                            <div class="btn-group" role="group" aria-label="Acciones">
+                                <button type="button" class="btn btn-primary" onclick="editUser(${data.id})"><i class="fad fa-edit"></i></button>
+                                <button type="button" class="btn btn-danger" onclick="deleteUser(${data.id})"><i class="fad fa-trash-alt"></i></button>
+                            </div>`;
                 }
             }
         ],

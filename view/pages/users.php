@@ -11,7 +11,7 @@
                     <th>Correo Electrónico</th>
                     <th>Rol</th>
                     <th>Fecha de Registro</th>
-                    <th>Acciones</th>
+                    <th width="10%">Acciones</th>
                 </tr>
             </thead>
         </table>

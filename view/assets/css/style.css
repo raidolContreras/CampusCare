@@ -15374,7 +15374,7 @@ body {
 }
 
 .modal-header {
-  background-color: #f8f9fa; /* Color de fondo para el encabezado del modal */
+  background-color: #01643d; /* Color de fondo para el encabezado del modal */
   border-bottom: none; /* Eliminar el borde inferior por defecto */
   position: relative; /* Para posicionar absolutamente el botón de cierre */
 }

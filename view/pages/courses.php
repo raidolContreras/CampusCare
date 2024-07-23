@@ -9,7 +9,7 @@
                     <th>Nombre del curso</th>
                     <th>Fecha de inicio</th>
                     <th>Fecha de finalización</th>
-                    <th>Acciones</th>
+                    <th width="10%">Acciones</th>
                 </tr>
             </thead>
         </table>
@@ -76,14 +76,9 @@
                     "data": null,
                     "render": function (data) {
                         return `
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    Acciones
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="#" onclick="editCourse(${data.idCourse})">Editar</a>
-                                    <a class="dropdown-item" href="#" onclick="deleteCourse(${data.idCourse})">Eliminar</a>
-                                </div>
+                            <div class="btn-group" role="group" aria-label="Acciones">
+                                <button type="button" class="btn btn-primary" onclick="editCourse(${data.idCourse})"><i class="fad fa-edit"></i></button>
+                                <button type="button" class="btn btn-danger" onclick="deleteCourse(${data.idCourse})"><i class="fad fa-trash-alt"></i></button>
                             </div>`;
                     }
                 }

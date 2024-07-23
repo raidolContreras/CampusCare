@@ -222,14 +222,9 @@
                     "data": null,
                     "render": function (data) {
                         return `
-                            <div class="dropdown">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-expanded="false">
-                                    Acciones
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                    <a class="dropdown-item" href="#" onclick="editEvent(${data.idEvent})">Editar</a>
-                                    <a class="dropdown-item" href="#" onclick="deleteEvent(${data.idEvent})">Eliminar</a>
-                                </div>
+                            <div class="btn-group" role="group" aria-label="Acciones">
+                                <button type="button" class="btn btn-primary" onclick="editEvent(${data.idEvent})"><i class="fad fa-edit"></i></button>
+                                <button type="button" class="btn btn-danger" onclick="deleteEvent(${data.idEvent})"><i class="fad fa-trash-alt"></i></button>
                             </div>`;
                     }
                 }
