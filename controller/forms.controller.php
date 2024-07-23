@@ -1,14 +1,12 @@
 <?php
 class FormsController {
-    public function ctrRegisterEvent() {
-        // Código para registrar eventos
-    }
 
     public function ctrRegisterUser() {
-        if (isset($_POST["name"])) {
+        if (isset($_POST["firstname"])) {
             $table = "users";
             $data = array(
-                "name" => $_POST["name"],
+                "firstname" => $_POST["firstname"],
+                "lastname" => $_POST["lastname"],
                 "email" => $_POST["email"],
                 "password" => password_hash($_POST["password"], PASSWORD_DEFAULT),
                 "role" => $_POST["role"]
