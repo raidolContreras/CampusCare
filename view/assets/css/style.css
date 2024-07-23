@@ -7029,6 +7029,7 @@ fieldset:disabled .btn {
 .modal-title {
   margin-bottom: 0;
   line-height: 1.5;
+  color: white !important;
 }
 
 .modal-body {

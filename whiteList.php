@@ -27,7 +27,7 @@ function includeUserPages($pagina) {
 }
 
 function includeAuthPages($pagina) {
-    $whitelist = ['inicio', 'users', 'events', 'event_types', 'students', 'register_event'];
+    $whitelist = ['inicio', 'users', 'events', 'event_types', 'students', 'register_event', 'courses'];
     if (in_array($pagina, $whitelist)) {
         includeUserPages($pagina);
     } else {

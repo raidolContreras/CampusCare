@@ -31,10 +31,26 @@ function setActiveClass($pageName, $currentPage) {
                             <div class="col-8">Usuarios</div> 
                         </div>
                     </a>
+                    <a href="courses" class="mt-1 menu-top py-2 <?= setActiveClass('courses', $pagina) ?>">
+                        <div class="row">
+                            <div class="col-2">
+                                <i class="fad fa-graduation-cap"></i>
+                            </div>
+                            <div class="col-8">Cursos</div> 
+                        </div>
+                    </a>
+                    <a href="events" class="mt-1 menu-top py-2 <?= setActiveClass('events', $pagina) ?>">
+                        <div class="row">
+                            <div class="col-2">
+                                <i class="fad fa-calendar"></i>
+                            </div>
+                            <div class="col-8">Eventos</div> 
+                        </div>
+                    </a>
                     <a href="students" class="mt-1 menu-top py-2 <?= setActiveClass('students', $pagina) ?>">
                         <div class="row">
                             <div class="col-2">
-                                <i class="fa-duotone fa-users"></i>
+                                <i class="fad fa-user-graduate"></i>
                             </div>
                             <div class="col-8">Estudiantes</div> 
                         </div>

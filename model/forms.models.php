@@ -2,16 +2,8 @@
 include "conection.php";
 
 class FormsModel {
-    static public function mdlRegisterEvent($data) {
-        $stmt = Conexion::conectar()->prepare("INSERT INTO events (eventName, lastname, type, points) VALUES (:eventName, :lastname, :type, :points)");
-        $stmt->bindParam(":eventName", $data["eventName"], PDO::PARAM_STR);
-        $stmt->bindParam(":type", $data["type"], PDO::PARAM_STR);
-        $stmt->bindParam(":points", $data["points"], PDO::PARAM_INT);
-        $response = $stmt->execute();
-        $stmt -> closeCursor();
-        $stmt = null;
-        return $response;
-    }
+    
+// Users
 
     static public function mdlRegisterUser($table, $data) {
         $stmt = Conexion::conectar()->prepare("INSERT INTO $table (firstname, email, password, role) VALUES (:firstname, :email, :password, :role)");
@@ -95,6 +87,171 @@ class FormsModel {
         $stmt->bindParam(":id", $data["id"], PDO::PARAM_INT);
         $response = $stmt->execute();
         $stmt -> closeCursor();
+        $stmt = null;
+        return $response;
+    }
+    
+// Events
+
+    static public function mdlRegisterEvent($data) {
+        $stmt = Conexion::conectar()->prepare("INSERT INTO events (eventName, lastname, type, points) VALUES (:eventName, :lastname, :type, :points)");
+        $stmt->bindParam(":eventName", $data["eventName"], PDO::PARAM_STR);
+        $stmt->bindParam(":type", $data["type"], PDO::PARAM_STR);
+        $stmt->bindParam(":points", $data["points"], PDO::PARAM_INT);
+        $response = $stmt->execute();
+        $stmt -> closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlGetEvents() {
+        $stmt = Conexion::conectar()->prepare("SELECT * FROM events");
+        $stmt->execute();
+        $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlAddEvent($eventTypeId, $eventName, $date, $location, $start_time, $end_time, $points, $vacancies_available, $description) {
+        $stmt = Conexion::conectar()->prepare("INSERT INTO events (eventTypeId, eventName, date, location, start_time, end_time, points, vacancies_available, description, createdAt) VALUES (:eventTypeId, :eventName, :date, :location, :start_time, :end_time, :points, :vacancies_available, :description, NOW())");
+        $stmt->bindParam(":eventTypeId", $eventTypeId, PDO::PARAM_INT);
+        $stmt->bindParam(":eventName", $eventName, PDO::PARAM_STR);
+        $stmt->bindParam(":date", $date, PDO::PARAM_STR);
+        $stmt->bindParam(":location", $location, PDO::PARAM_STR);
+        $stmt->bindParam(":start_time", $start_time, PDO::PARAM_STR);
+        $stmt->bindParam(":end_time", $end_time, PDO::PARAM_STR);
+        $stmt->bindParam(":points", $points, PDO::PARAM_INT);
+        $stmt->bindParam(":vacancies_available", $vacancies_available, PDO::PARAM_INT);
+        $stmt->bindParam(":description", $description, PDO::PARAM_STR);
+
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlGetEventById($idEvent) {
+        $stmt = Conexion::conectar()->prepare("SELECT idEvent, eventTypeId, eventName, date, location, start_time, end_time, points, vacancies_available, description FROM events WHERE idEvent = :idEvent");
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlUpdateEvent($idEvent, $eventTypeId, $eventName, $date, $location, $start_time, $end_time, $points, $vacancies_available, $description) {
+        $stmt = Conexion::conectar()->prepare("UPDATE events SET eventTypeId = :eventTypeId, eventName = :eventName, date = :date, location = :location, start_time = :start_time, end_time = :end_time, points = :points, vacancies_available = :vacancies_available, description = :description WHERE idEvent = :idEvent");
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":eventTypeId", $eventTypeId, PDO::PARAM_INT);
+        $stmt->bindParam(":eventName", $eventName, PDO::PARAM_STR);
+        $stmt->bindParam(":date", $date, PDO::PARAM_STR);
+        $stmt->bindParam(":location", $location, PDO::PARAM_STR);
+        $stmt->bindParam(":start_time", $start_time, PDO::PARAM_STR);
+        $stmt->bindParam(":end_time", $end_time, PDO::PARAM_STR);
+        $stmt->bindParam(":points", $points, PDO::PARAM_INT);
+        $stmt->bindParam(":vacancies_available", $vacancies_available, PDO::PARAM_INT);
+        $stmt->bindParam(":description", $description, PDO::PARAM_STR);
+
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlDeleteEvent($idEvent) {
+        $stmt = Conexion::conectar()->prepare("DELETE FROM events WHERE idEvent = :idEvent");
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+// Courses
+    static public function mdlGetCourses() {
+        $stmt = Conexion::conectar()->prepare("SELECT * FROM courses");
+        $stmt->execute();
+        $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlAddCourse($nameCourse, $startCourse, $endCourse) {
+        $stmt = Conexion::conectar()->prepare("INSERT INTO courses (nameCourse, startCourse, endCourse) VALUES (:nameCourse, :startCourse, :endCourse)");
+
+        $stmt->bindParam(":nameCourse", $nameCourse, PDO::PARAM_STR);
+        $stmt->bindParam(":startCourse", $startCourse, PDO::PARAM_STR);
+        $stmt->bindParam(":endCourse", $endCourse, PDO::PARAM_STR);
+
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlGetCourseById($idCourse) {
+        $stmt = Conexion::conectar()->prepare("SELECT idCourse, nameCourse, startCourse, endCourse FROM courses WHERE idCourse = :idCourse");
+        $stmt->bindParam(":idCourse", $idCourse, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlUpdateCourse($idCourse, $nameCourse, $startCourse, $endCourse) {
+        $stmt = Conexion::conectar()->prepare("UPDATE courses SET nameCourse = :nameCourse, startCourse = :startCourse, endCourse = :endCourse WHERE idCourse = :idCourse");
+        $stmt->bindParam(":idCourse", $idCourse, PDO::PARAM_INT);
+        $stmt->bindParam(":nameCourse", $nameCourse, PDO::PARAM_STR);
+        $stmt->bindParam(":startCourse", $startCourse, PDO::PARAM_STR);
+        $stmt->bindParam(":endCourse", $endCourse, PDO::PARAM_STR);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlDeleteCourse($idCourse) {
+        $stmt = Conexion::conectar()->prepare("DELETE FROM courses WHERE idCourse = :idCourse");
+        $stmt->bindParam(":idCourse", $idCourse, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
         $stmt = null;
         return $response;
     }
