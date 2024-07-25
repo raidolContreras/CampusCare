@@ -72,7 +72,7 @@ class FormsModel {
     }
 
     static public function mdlShowUser($table, $item, $value) {
-        $stmt = Conexion::conectar()->prepare("SELECT id, firstname, lastname, email, role, created_at FROM $table WHERE $item = :$item");
+        $stmt = Conexion::conectar()->prepare("SELECT * FROM $table WHERE $item = :$item");
         $stmt->bindParam(":" . $item, $value, PDO::PARAM_STR);
         $stmt->execute();
         $response = $stmt->fetch();

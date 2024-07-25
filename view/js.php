@@ -3,27 +3,31 @@
 <script src="https://kit.fontawesome.com/f4781c35cc.js" crossorigin="anonymous"></script>
 
 <script>
-    $(document).ready(function() {
+$(document).ready(function() {
+    // Manejar el clic en el botón de navegación
+    $('.navbar-toggler').on('click', function() {
+        $(this).toggleClass('active');
+        $('.navbar-collapse').toggleClass('show');
+    });
 
     // Cerrar el menú al hacer clic en un enlace del menú
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-            navbarToggler.classList.remove('active');
-            navbarCollapse.classList.remove('show');
+    $('.nav-link').on('click', function() {
+        $('.navbar-collapse').collapse('hide');
+        $('.navbar-toggler').removeClass('active');
 
-            // Remover el backdrop si existe
-            const existingBackdrop = document.querySelector('.modal-backdrop');
-            if (existingBackdrop) {
-                existingBackdrop.classList.remove('show');
-                existingBackdrop.remove();
-            }
-        });
-    });
-
-    document.querySelector('.navbar-collapse').addEventListener('click', function() {
-        this.classList.toggle('active');
+        // Remover el backdrop si existe
+        const existingBackdrop = document.querySelector('.modal-backdrop');
+        if (existingBackdrop) {
+            existingBackdrop.classList.remove('show');
+            existingBackdrop.remove();
+        }
     });
 });
+
+function closeMenu(navbarId) {
+    document.getElementById(navbarId).classList.remove('show');
+    $('.navbar-toggler').removeClass('active');
+}
 
 function logout() {
     $.ajax({

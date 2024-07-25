@@ -20,8 +20,7 @@
 	</nav>
 	
 	<div class="navbar-collapse" id="navbarNav">
-		<span class="close-btn" onclick="closeMenu('navbarNav')"></span>
-				<ul class="navbar-nav mt-5">
+		<ul class="navbar-nav">
 			<li class="nav-item mt-5">
 				<?php
 					echo $_SESSION["user"]['role'];
