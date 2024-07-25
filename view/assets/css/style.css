@@ -14336,8 +14336,8 @@ textarea {
 .btn {
   text-decoration: none !important;
   border-radius: 30px;
-  padding-left: 30px;
-  padding-right: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
   border-width: 1px;
   border-color: transparent;
   border: none !important;
@@ -14346,6 +14346,7 @@ textarea {
   -webkit-transition: .3s all ease;
   -o-transition: .3s all ease;
   transition: .3s all ease;
+  font-size: x-small;
 }
 
 .btn.btn-primary {

@@ -36,6 +36,38 @@ class FormsController {
     public function ctrGradeStudent($data) {
         return FormsModel::mdlGradeStudent($data);
     }
+
+    public function ctrSearchAreas($idArea) {
+        return FormsModel::mdlSearchAreas($idArea);
+    }
+
+    public function ctrEditArea($editArea, $nameArea) {
+        return FormsModel::mdlEditArea($editArea, $nameArea);
+    }
+
+    public function ctrDeleteArea($deleteArea) {
+        return FormsModel::mdlDeleteArea($deleteArea);
+    }
+    
+    public function ctrAddArea($nameArea) {
+        return FormsModel::mdlAddArea($nameArea);
+    }
+
+    public function ctrSearchEventTypes($idEventType) {
+        return FormsModel::mdlSearchEventTypes($idEventType);
+    }
+
+    public function ctrEditEventType($editEventType, $name, $idArea, $pointsPerEvent, $benefitsPerYear) {
+        return FormsModel::mdlEditEventTypes($editEventType, $name, $idArea, $pointsPerEvent, $benefitsPerYear);
+    }
+
+    public function ctrDeleteEventType($deleteEventType) {
+        return FormsModel::mdlDeleteEventTypes($deleteEventType);
+    }
+    
+    public function ctrAddEventType($name, $pointsPerEvent, $benefitsPerYear, $idArea) {
+        return FormsModel::mdlAddEventTypes($name, $pointsPerEvent, $benefitsPerYear, $idArea);
+    }
     
 
 }

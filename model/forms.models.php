@@ -4,7 +4,7 @@ include "conection.php";
 class FormsModel {
     
 // Users
-
+    
     static public function mdlRegisterUser($table, $data) {
         $stmt = Conexion::conectar()->prepare("INSERT INTO $table (firstname, email, password, role) VALUES (:firstname, :email, :password, :role)");
         $stmt->bindParam(":firstname", $data["firstname"], PDO::PARAM_STR);
@@ -114,7 +114,13 @@ class FormsModel {
     }
 
     static public function mdlAddEvent($eventTypeId, $eventName, $date, $location, $start_time, $end_time, $points, $vacancies_available, $description) {
-        $stmt = Conexion::conectar()->prepare("INSERT INTO events (eventTypeId, eventName, date, location, start_time, end_time, points, vacancies_available, description, createdAt) VALUES (:eventTypeId, :eventName, :date, :location, :start_time, :end_time, :points, :vacancies_available, :description, NOW())");
+        $stmt = Conexion::conectar()->prepare("
+            INSERT INTO events 
+            (eventTypeId, eventName, date, location, start_time, end_time, points, vacancies_available, description, createdAt, idCourse) 
+            VALUES 
+            (:eventTypeId, :eventName, :date, :location, :start_time, :end_time, :points, :vacancies_available, :description, NOW(), (SELECT idCourse FROM courses WHERE active = 1))
+        ");
+    
         $stmt->bindParam(":eventTypeId", $eventTypeId, PDO::PARAM_INT);
         $stmt->bindParam(":eventName", $eventName, PDO::PARAM_STR);
         $stmt->bindParam(":date", $date, PDO::PARAM_STR);
@@ -124,17 +130,18 @@ class FormsModel {
         $stmt->bindParam(":points", $points, PDO::PARAM_INT);
         $stmt->bindParam(":vacancies_available", $vacancies_available, PDO::PARAM_INT);
         $stmt->bindParam(":description", $description, PDO::PARAM_STR);
-
+    
         if($stmt->execute()) {
             $response = "success";
         } else {
             $response = "error";
         }
-
+    
         $stmt->closeCursor();
         $stmt = null;
         return $response;
     }
+    
 
     static public function mdlGetEventById($idEvent) {
         $stmt = Conexion::conectar()->prepare("SELECT idEvent, eventTypeId, eventName, date, location, start_time, end_time, points, vacancies_available, description FROM events WHERE idEvent = :idEvent");
@@ -244,6 +251,166 @@ class FormsModel {
     static public function mdlDeleteCourse($idCourse) {
         $stmt = Conexion::conectar()->prepare("DELETE FROM courses WHERE idCourse = :idCourse");
         $stmt->bindParam(":idCourse", $idCourse, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlActivateCourse($idCourse) {
+        $sql = "UPDATE courses SET active = 0;";
+        $sql .= "UPDATE courses SET active = 1 WHERE idCourse = :idCourse;";
+
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idCourse", $idCourse, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlSearchAreas($idArea) {
+        if ($idArea == null) {
+            $sql = "SELECT * FROM areas";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->execute();
+            $response = $stmt->fetchAll();
+        } else {
+            $sql = "SELECT * FROM areas WHERE idArea = :idArea";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->bindParam(":idArea", $idArea, PDO::PARAM_INT);
+            $stmt->execute();
+            $response = $stmt->fetch();
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlEditArea($editArea, $nameArea) {
+        $sql = "UPDATE areas SET nameArea = :nameArea WHERE idArea = :editArea";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":editArea", $editArea, PDO::PARAM_INT);
+        $stmt->bindParam(":nameArea", $nameArea, PDO::PARAM_STR);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlDeleteArea($idArea) {
+        $sql = "DELETE FROM areas WHERE idArea = :idArea";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idArea", $idArea, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlAddArea($nameArea) {
+        $sql = "INSERT INTO areas (nameArea) VALUES (:nameArea)";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":nameArea", $nameArea, PDO::PARAM_STR);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlSearchEventTypes($idEventType) {
+        if ($idEventType == null) {
+            $sql = "SELECT * FROM event_types et LEFT JOIN areas a on a.idArea = et.idArea";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->execute();
+            $response = $stmt->fetchAll();
+        } else {
+            $sql = "SELECT * FROM event_types WHERE idEventType = :idEventType";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->bindParam(":idEventType", $idEventType, PDO::PARAM_INT);
+            $stmt->execute();
+            $response = $stmt->fetch();
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlEditEventTypes($editEventType, $name, $idArea, $pointsPerEvent, $benefitsPerYear) {
+        $sql = "UPDATE event_types SET name = :name, idArea = :idArea, pointsPerEvent = :pointsPerEvent, benefitsPerYear = :benefitsPerYear WHERE idEventType = :editEventType";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":editEventType", $editEventType, PDO::PARAM_INT);
+        $stmt->bindParam(":name", $name, PDO::PARAM_STR);
+        $stmt->bindParam(":idArea", $idArea, PDO::PARAM_INT);
+        $stmt->bindParam(":pointsPerEvent", $pointsPerEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":benefitsPerYear", $benefitsPerYear, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+    
+    static public function mdlDeleteEventTypes($idEventType) {
+        $sql = "DELETE FROM event_types WHERE idEventType = :idEventType";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idEventType", $idEventType, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlAddEventTypes($name, $pointsPerEvent, $benefitsPerYear, $idArea) {
+        $sql = "INSERT INTO event_types (name, pointsPerEvent, benefitsPerYear, idArea) VALUES (:name, :pointsPerEvent, :benefitsPerYear, :idArea)";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":name", $name, PDO::PARAM_STR);
+        $stmt->bindParam(":pointsPerEvent", $pointsPerEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":benefitsPerYear", $benefitsPerYear, PDO::PARAM_INT);
+        $stmt->bindParam(":idArea", $idArea, PDO::PARAM_INT);
         
         if($stmt->execute()) {
             $response = "success";

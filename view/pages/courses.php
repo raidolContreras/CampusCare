@@ -75,8 +75,16 @@
                 {
                     "data": null,
                     "render": function (data) {
+                        let activateButton = '';
+                        if (data.active == 0) {
+                            activateButton = `<button type="button" class="btn btn-success" onclick="activeCourse(${data.idCourse})"><i class="fad fa-check"></i></button>`;
+                        } else {
+                            activateButton = `<button type="button" class="btn btn-success" disabled><i class="fad fa-check"></i></button>`;
+                        }
+
                         return `
                             <div class="btn-group" role="group" aria-label="Acciones">
+                                ${activateButton}
                                 <button type="button" class="btn btn-primary" onclick="editCourse(${data.idCourse})"><i class="fad fa-edit"></i></button>
                                 <button type="button" class="btn btn-danger" onclick="deleteCourse(${data.idCourse})"><i class="fad fa-trash-alt"></i></button>
                             </div>`;
@@ -107,4 +115,23 @@
         });
         return false;
     });
+    
+    function activeCourse(idCourse) {
+        $.ajax({
+            url: 'controller/ajax/ajax.activateCourse.php',
+            type: 'POST',
+            data: {
+                idCourse: idCourse
+            },
+            success: function(response) {
+                $('#coursesTable').DataTable().ajax.reload();
+                alert('Curso activado exitosamente');
+            },
+            error: function(xhr, status, error) {
+                // Manejo de errores
+                console.error('Error activando el curso:', error);
+                alert('Hubo un error al activar el curso. Por favor, inténtelo de nuevo.');
+            }
+        });
+    }
 </script>
