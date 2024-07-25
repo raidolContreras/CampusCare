@@ -14346,7 +14346,7 @@ textarea {
   -webkit-transition: .3s all ease;
   -o-transition: .3s all ease;
   transition: .3s all ease;
-  font-size: x-small;
+  font-size: small;
 }
 
 .btn.btn-primary {
