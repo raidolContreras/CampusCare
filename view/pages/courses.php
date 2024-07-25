@@ -64,8 +64,10 @@
     function initializeDataTable() {
         return $('#coursesTable').DataTable({
             ajax: {
-                url: "controller/ajax/ajax.getCourses.php",
-                dataSrc: ''
+                type: 'POST',
+                url: "controller/ajax/ajax.forms.php",
+                dataSrc: '',
+                data: { search: 'courses'}
             },
             columns: [
                 { "data": "idCourse" },

@@ -193,10 +193,21 @@ class FormsModel {
     }
 
 // Courses
-    static public function mdlGetCourses() {
-        $stmt = Conexion::conectar()->prepare("SELECT * FROM courses");
-        $stmt->execute();
-        $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    static public function mdlGetCourses($idCourse) {
+        
+        if ($idCourse == null) {
+            $sql = "SELECT * FROM courses";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->execute();
+            $response = $stmt->fetchAll();
+        } else {
+            $sql = "SELECT * FROM courses WHERE idCourse = :idCourse";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->bindParam(":idCourse", $idCourse, PDO::PARAM_INT);
+            $stmt->execute();
+            $response = $stmt->fetch();
+        }
+        
         $stmt->closeCursor();
         $stmt = null;
         return $response;

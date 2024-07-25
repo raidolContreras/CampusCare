@@ -69,5 +69,8 @@ class FormsController {
         return FormsModel::mdlAddEventTypes($name, $pointsPerEvent, $benefitsPerYear, $idArea);
     }
     
+    public function ctrGetCourses($idCourse) {
+        return FormsModel::mdlGetCourses($idCourse);
+    }
 
 }
