@@ -49,28 +49,61 @@
     </div>
 </div>
 
+<!-- Modal para editar curso -->
+<div class="modal fade" id="editCourseModal" tabindex="-1" aria-labelledby="editCourseModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary">
+                <h5 class="modal-title" id="editCourseModalLabel">Editar Curso</h5>
+            </div>
+            <div class="modal-body">
+                <form id="editCourseForm">
+                    <input type="hidden" id="editCourseId" name="idCourse">
+                    <div class="form-group">
+                        <label for="editNameCourse">Nombre del curso:</label>
+                        <input type="text" class="form-control" id="editNameCourse" name="nameCourse" placeholder="Ingrese el nombre del curso" required>
+                    </div>
+                    <div class="row my-3">
+                        <div class="form-group col-6">
+                            <label for="editStartCourse">Fecha de inicio:</label>
+                            <input type="date" class="form-control" id="editStartCourse" name="startCourse" required>
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="editEndCourse">Fecha de finalización:</label>
+                            <input type="date" class="form-control" id="editEndCourse" name="endCourse" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 
+$(document).ready(function() {
     var table = initializeDataTable();
 
     $('.registerCourseModal').on('click', function(e) {
-        $('#nameCourse').val('');
-        $('#startCourse').val('');
-        $('#endCourse').val('');
+        $('#registerCourseForm')[0].reset();
         $('#registerCourseModal').modal('show');
     });
-    
+
+    // Inicializa DataTable
     function initializeDataTable() {
         return $('#coursesTable').DataTable({
             ajax: {
                 type: 'POST',
                 url: "controller/ajax/ajax.forms.php",
                 dataSrc: '',
-                data: { search: 'courses'}
+                data: { search: 'courses' }
             },
             columns: [
-                { "data": "idCourse" },
+                { "data": null },
                 { "data": "nameCourse" },
                 { "data": "startCourse" },
                 { "data": "endCourse" },
@@ -95,45 +128,110 @@
             ],
             language: {
                 url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json"
+            },
+            rowCallback: function(row, data, index) {
+                // Agregar el índice incrementable
+                $('td:eq(0)', row).html(index + 1);
             }
         });
     }
-    
-    // Función para añadir un curso
+
+    // Añadir curso
     $('#registerCourseForm').on('submit', function(event) {
         event.preventDefault();
+        var formData = $(this).serializeArray(); // Serializa el formulario a un array de objetos
+        formData.push({ name: 'search', value: 'courses' });
+        formData.push({ name: 'addCourse', value: true });
+
         $.ajax({
-            url: 'controller/ajax/ajax.addCourse.php',
+            url: 'controller/ajax/ajax.forms.php',
             method: 'POST',
-            data: $(this).serialize(),
+            data: $.param(formData),
             success: function(response) {
-                alert(response);
-                if (response ==='success') {
-                    $('#registerCourseForm')[0].reset();
-                    $('#registerCourseModal').modal('hide');
-                    table.ajax.reload();
-                }
+                $('#registerCourseForm')[0].reset();
+                $('#registerCourseModal').modal('hide');
+                table.ajax.reload();
             }
         });
         return false;
     });
-    
-    function activeCourse(idCourse) {
+
+    // Activar curso
+    window.activeCourse = function(idCourse) {
         $.ajax({
             url: 'controller/ajax/ajax.activateCourse.php',
             type: 'POST',
-            data: {
-                idCourse: idCourse
-            },
+            data: { idCourse: idCourse },
             success: function(response) {
-                $('#coursesTable').DataTable().ajax.reload();
+                table.ajax.reload();
                 alert('Curso activado exitosamente');
             },
             error: function(xhr, status, error) {
-                // Manejo de errores
                 console.error('Error activando el curso:', error);
                 alert('Hubo un error al activar el curso. Por favor, inténtelo de nuevo.');
             }
         });
     }
+
+    // Editar curso
+    window.editCourse = function(idCourse) {
+        $.ajax({
+            url: 'controller/ajax/ajax.forms.php',
+            type: 'POST',
+            data: { search: 'courses', idCourse: idCourse },
+            success: function(response) {
+                var course = JSON.parse(response);
+                $('#editCourseId').val(course.idCourse);
+                $('#editNameCourse').val(course.nameCourse);
+                $('#editStartCourse').val(course.startCourse);
+                $('#editEndCourse').val(course.endCourse);
+                $('#editCourseModal').modal('show');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error cargando los datos del curso:', error);
+                alert('Hubo un error al cargar los datos del curso. Por favor, inténtelo de nuevo.');
+            }
+        });
+    }
+
+    // Guardar cambios al editar curso
+    $('#editCourseForm').on('submit', function(event) {
+        event.preventDefault();
+        var formData = $(this).serializeArray(); // Serializa el formulario a un array de objetos
+        formData.push({ name: 'search', value: 'courses' });
+        formData.push({ name: 'editCourse', value: true });
+
+        $.ajax({
+            url: 'controller/ajax/ajax.forms.php',
+            method: 'POST',
+            data: $.param(formData),
+            success: function(response) {
+                $('#editCourseForm')[0].reset();
+                $('#editCourseModal').modal('hide');
+                table.ajax.reload();
+            }
+        });
+        return false;
+    });
+
+    // Eliminar curso
+    window.deleteCourse = function(idCourse) {
+        if (confirm('¿Estás seguro de que quieres eliminar este curso?')) {
+            $.ajax({
+                url: 'controller/ajax/ajax.forms.php',
+                type: 'POST',
+                data: { deleteCourse: idCourse, search: 'courses' },
+                success: function(response) {
+                    table.ajax.reload();
+                    alert('Curso eliminado exitosamente');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error eliminando el curso:', error);
+                    alert('Hubo un error al eliminar el curso. Por favor, inténtelo de nuevo.');
+                }
+            });
+        }
+    }
+});
+
 </script>

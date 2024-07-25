@@ -73,4 +73,16 @@ class FormsController {
         return FormsModel::mdlGetCourses($idCourse);
     }
 
+    public function ctrAddCourse($nameCourse, $startCourse, $endCourse) {
+        return FormsModel::mdlAddCourse($nameCourse, $startCourse, $endCourse);
+    }
+
+    public function ctrEditCourse($idCourse, $nameCourse, $startCourse, $endCourse) {
+        return FormsModel::mdlUpdateCourse($idCourse, $nameCourse, $startCourse, $endCourse);
+    }
+
+    public function ctrDeleteCourse($deleteCourse) {
+        return FormsModel::mdlDeleteCourse($deleteCourse);
+    }
+
 }

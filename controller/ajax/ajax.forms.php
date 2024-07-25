@@ -44,11 +44,11 @@ if (isset($_POST['search'])) {
         $course = (isset($_POST['idCourse']))? $_POST['idCourse'] : null;
         $searchCourses = new FormsController();
         if (isset($_POST['editCourse'])) {
-            $courses = $searchCourses->ctrEditCourse($_POST['editCourse'], $_POST['editCourseName'], $_POST['editCoursePoints'], $_POST['editCourseBenefits']);
+            $courses = $searchCourses->ctrEditCourse($_POST['idCourse'], $_POST['nameCourse'], $_POST['startCourse'], $_POST['endCourse']);
         } elseif (isset($_POST['deleteCourse'])) {
             $courses = $searchCourses->ctrDeleteCourse($_POST['deleteCourse']);
-        } elseif (isset($_POST['coursePoints'])) {
-            $courses = $searchCourses->ctrAddCourse($_POST['courseName'], $_POST['coursePoints'], $_POST['courseBenefits']);
+        } elseif (isset($_POST['addCourse'])) {
+            $courses = $searchCourses->ctrAddCourse($_POST['nameCourse'], $_POST['startCourse'], $_POST['endCourse']);
         } else {
             $courses = $searchCourses->ctrGetCourses($course);
         }
