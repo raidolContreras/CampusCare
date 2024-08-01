@@ -4,12 +4,11 @@ session_start();
 $pagina = filter_input(INPUT_GET, 'pagina', FILTER_SANITIZE_STRING);
 $pagina = $pagina ? $pagina : 'inicio';
 
-
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['logged'])) {
     // Si no está logueado, mostrar página de login
-    if ($pagina == 'login') {
-        include_once 'view/pages/login.php';
+    if ($pagina == 'login' || $pagina == 'registerStudent') {
+        include_once 'view/pages/'.$pagina.'.php';
     } else {
         // Si intenta acceder a otra página sin loguearse, redirigir al login
         header("Location: login");
@@ -27,7 +26,13 @@ function includeUserPages($pagina) {
 }
 
 function includeAuthPages($pagina) {
-    $whitelist = ['inicio', 'users', 'events', 'event_types', 'students', 'register_event', 'courses', 'areas'];
+    if ($_SESSION["user"]['role'] == 'admin') {
+        $whitelist = ['inicio', 'users', 'events', 'event_types', 'students', 'register_event', 'courses', 'areas'];
+    } elseif ($_SESSION["user"]['role'] == 'teacher') {
+        $whitelist = ['inicio'];
+    } else {
+        $whitelist = ['inicio'];
+    }
     if (in_array($pagina, $whitelist)) {
         includeUserPages($pagina);
     } else {

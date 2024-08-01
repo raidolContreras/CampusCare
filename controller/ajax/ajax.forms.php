@@ -26,7 +26,7 @@ if (isset($_POST['search'])) {
     }
 
     if ($_POST['search'] == 'event_types') {
-        $eventType = (isset($_POST['eventType']))? $_POST['eventType'] : null;
+        $eventType = (isset($_POST['eventType'])) ? $_POST['eventType'] : null;
         $searchEventTypes = new FormsController();
         if (isset($_POST['editEventType'])) {
             $eventTypes = $searchEventTypes->ctrEditEventType($_POST['editEventType'], $_POST['editEventTypeName'], $_POST['editAreaEncargada'], $_POST['editEventTypePoints'], $_POST['editEventTypeBenefits']);
@@ -41,7 +41,7 @@ if (isset($_POST['search'])) {
     }
 
     if ($_POST['search'] == 'courses') {
-        $course = (isset($_POST['idCourse']))? $_POST['idCourse'] : null;
+        $course = (isset($_POST['idCourse'])) ? $_POST['idCourse'] : null;
         $searchCourses = new FormsController();
         if (isset($_POST['editCourse'])) {
             $courses = $searchCourses->ctrEditCourse($_POST['idCourse'], $_POST['nameCourse'], $_POST['startCourse'], $_POST['endCourse']);
@@ -54,4 +54,36 @@ if (isset($_POST['search'])) {
         }
         echo json_encode($courses);
     }
+
+    if ($_POST['search'] == 'student') {
+        $student = (isset($_POST['idStudent']))? $_POST['idStudent'] : null;
+        $searchStudents = new FormsController();
+        if (isset($_POST['action'])) {
+            if ($_POST['action'] == 'acceptStudent') {
+                $students = $searchStudents->ctrAcceptStudent($_POST['idStudent']);
+            }
+        } else {
+            $students = $searchStudents->ctrSearchStudents($student);
+        }
+        echo json_encode($students);
+    }
+}
+
+// Añadir funcionalidad de registro de estudiantes
+if (isset($_POST['matricula']) && isset($_POST['nombre']) && isset($_POST['apellidos']) && isset($_POST['licenciatura']) && isset($_POST['tipoLicenciatura']) && isset($_POST['grado']) && isset($_POST['correoInstitucional']) && isset($_POST['telefonoContacto']) && isset($_POST['telefonoEmergencia']) && isset($_POST['parentesco'])) {
+    $matricula = $_POST['matricula'];
+    $nombre = $_POST['nombre'];
+    $apellidos = $_POST['apellidos'];
+    $licenciatura = $_POST['licenciatura'];
+    $tipoLicenciatura = $_POST['tipoLicenciatura'];
+    $grado = $_POST['grado'];
+    $correoInstitucional = $_POST['correoInstitucional'];
+    $telefonoContacto = $_POST['telefonoContacto'];
+    $telefonoEmergencia = $_POST['telefonoEmergencia'];
+    $parentesco = $_POST['parentesco'];
+
+    $registerStudent = new FormsController();
+    $response = $registerStudent->ctrRegisterStudent($matricula, $nombre, $apellidos, $licenciatura, $tipoLicenciatura, $grado, $correoInstitucional, $telefonoContacto, $telefonoEmergencia, $parentesco);
+
+    echo $response;
 }

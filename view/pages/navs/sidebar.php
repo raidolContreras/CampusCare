@@ -15,14 +15,16 @@ function setActiveClass($pageName, $currentPage) {
             </a>
             <nav class="">
                 <div class="row schools px-2" style="padding-right: 0 !important;">
-                    <a href="inicio" class="mt-3 menu-top py-2 <?= setActiveClass('inicio', $pagina) ?>">
-                        <div class="row">
-                            <div class="col-2">
-                                <i class="fa-duotone fa-house"></i> 
-                            </div>
-                            <div class="col-8">Tablero</div> 
+                <a href="inicio" class="mt-3 menu-top py-2 <?= setActiveClass('inicio', $pagina) ?>">
+                    <div class="row">
+                        <div class="col-2">
+                            <i class="fa-duotone fa-house"></i> 
                         </div>
-                    </a>
+                        <div class="col-8">Tablero</div> 
+                    </div>
+                </a>
+                <?php if ($_SESSION["user"]['role'] == 'admin'):?>
+                
                     <a href="users" class="mt-1 menu-top py-2 <?= setActiveClass('users', $pagina) ?>">
                         <div class="row">
                             <div class="col-2">
@@ -63,6 +65,12 @@ function setActiveClass($pageName, $currentPage) {
                             <div class="col-8">Estudiantes</div> 
                         </div>
                     </a>
+
+                <?php elseif ($_SESSION["user"]['role'] == 'teacher'): ?>
+
+                <?php else: ?>
+
+                <?php endif ?>
                 </div>
             </nav>
         </div>

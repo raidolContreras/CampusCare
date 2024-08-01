@@ -25,11 +25,11 @@
 				<?php
 					echo $_SESSION["user"]['role'];
 				?>
-				<h5>
+				<h6>
 				<?php
-					echo $_SESSION["user"]['name'];
+					echo $_SESSION["user"]['firstname'] . ' ' . $_SESSION["user"]['lastname'];
 				?>
-				</h5>
+				</h6>
 			</li>
 			<li class="nav-item">
 				<a class="nav-link px-3" href="" onclick="logout()">

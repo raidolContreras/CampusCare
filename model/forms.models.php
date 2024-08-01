@@ -433,5 +433,101 @@ class FormsModel {
         $stmt = null;
         return $response;
     }
+
+    public static function mdlRegisterStudent($table, $data) {
+        try {
+            $stmt = Conexion::conectar()->prepare("INSERT INTO $table (matricula, firstname, lastname, licenciatura, type_lic, grado, email, phone, emergenci_phone, parent, idCourse) VALUES (:matricula, :firstname, :lastname, :licenciatura, :type_lic, :grado, :email, :phone, :emergenci_phone, :parent, (SELECT idCourse FROM courses WHERE active = 1))");
+
+            $stmt->bindParam(":matricula", $data["matricula"], PDO::PARAM_STR);
+            $stmt->bindParam(":firstname", $data["firstname"], PDO::PARAM_STR);
+            $stmt->bindParam(":lastname", $data["lastname"], PDO::PARAM_STR);
+            $stmt->bindParam(":licenciatura", $data["licenciatura"], PDO::PARAM_STR);
+            $stmt->bindParam(":type_lic", $data["type_lic"], PDO::PARAM_STR);
+            $stmt->bindParam(":grado", $data["grado"], PDO::PARAM_INT);
+            $stmt->bindParam(":email", $data["email"], PDO::PARAM_STR);
+            $stmt->bindParam(":phone", $data["phone"], PDO::PARAM_STR);
+            $stmt->bindParam(":emergenci_phone", $data["emergenci_phone"], PDO::PARAM_STR);
+            $stmt->bindParam(":parent", $data["parent"], PDO::PARAM_STR);
+
+            if ($stmt->execute()) {
+                return "success";
+            } else {
+                return "error";
+            }
+        }catch (PDOException $e) {
+            if ($e->getCode() == 23000) { // Código de error para entrada duplicada
+                $response = "duplicate";
+            } else {
+                $response = "error";
+            }
+        }
+
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
     
+    static public function mdlSearchStudents($idStudent) {
+        if ($idStudent == null) {
+            $sql = "SELECT * FROM student s LEFT JOIN courses c ON c.idCourse = s.idCourse WHERE c.active = 1";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->execute();
+            $response = $stmt->fetchAll();
+        } else {
+            $sql = "SELECT * FROM student s LEFT JOIN courses c ON c.idCourse = s.idCourse WHERE s.idStudent = :idStudent AND c.active = 1";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_STR);
+            $stmt->execute();
+            $response = $stmt->fetch();
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlAcceptStudent($idStudent) {
+        $sql = "UPDATE student SET accepted = 1 WHERE idStudent = :idStudent";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_STR);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlAddPasswordStudent($cryptPass, $student) {
+        $sql = "UPDATE student SET password = :password WHERE idStudent = :student";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":password", $cryptPass, PDO::PARAM_STR);
+        $stmt->bindParam(":student", $student, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlGetStudent($email) {
+        $sql = "SELECT * FROM student WHERE email = :email";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":email", $email, PDO::PARAM_STR);
+        $stmt->execute();
+        $response = $stmt->fetch();
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
 }

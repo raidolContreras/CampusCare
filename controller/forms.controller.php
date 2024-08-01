@@ -28,7 +28,16 @@ class FormsController {
                 $_SESSION["user"] = $response;
                 echo 'success';
             } else {
-                echo 'error';
+                $student = FormsModel::mdlGetStudent($_POST['email']);
+                if ($student && password_verify($_POST["password"], $student["password"])) {
+                    session_start();
+                    $student['role'] = 'student'; 
+                    $_SESSION["logged"] = true;
+                    $_SESSION["user"] = $student;
+                    echo 'success';
+                } else {
+                    echo 'error';
+                }
             }
         }
     }
@@ -83,6 +92,68 @@ class FormsController {
 
     public function ctrDeleteCourse($deleteCourse) {
         return FormsModel::mdlDeleteCourse($deleteCourse);
+    }
+
+    public function ctrRegisterStudent($matricula, $nombre, $apellidos, $licenciatura, $tipoLicenciatura, $grado, $correoInstitucional, $telefonoContacto, $telefonoEmergencia, $parentesco) {
+        $table = "student";
+        $data = array(
+            "matricula" => $matricula,
+            "firstname" => $nombre,
+            "lastname" => $apellidos,
+            "licenciatura" => $licenciatura,
+            "type_lic" => $tipoLicenciatura,
+            "grado" => $grado,
+            "email" => $correoInstitucional,
+            "phone" => $telefonoContacto,
+            "emergenci_phone" => $telefonoEmergencia,
+            "parent" => $parentesco
+        );
+
+        $response = FormsModel::mdlRegisterStudent($table, $data);
+        return $response;
+    }
+    
+    public function ctrSearchStudents($student) {
+        return FormsModel::mdlSearchStudents($student);
+    }
+
+    public function ctrAcceptStudent($student) {
+        $response = FormsModel::mdlAcceptStudent($student);
+        if ($response == 'success') {
+            // Generate a random password
+            $password = $this->generateRandomPassword();
+
+            $cryptPass = password_hash($password, PASSWORD_DEFAULT);
+
+            $response = FormsModel::mdlAddPasswordStudent($cryptPass, $student);
+
+            // // If the update is successful, send the password to the student by email
+            // if ($updateResponse == 'success') {
+            // }
+        }
+        return $password;
+    }
+
+    private function generateRandomPassword($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    private function sendPasswordToStudent($email, $password) {
+        // Send the password to the student by email
+        // Example:
+        // $to = $email;
+        // $subject = 'Your Campus Care Password';
+        // $message = 'Your password is: '. $password;
+        // $headers = 'From: Campus Care <noreply@campuscare.com>';
+        // mail($to, $subject, $message, $headers);
+        // return true;
+        return false; // Placeholder for actual sending function
     }
 
 }

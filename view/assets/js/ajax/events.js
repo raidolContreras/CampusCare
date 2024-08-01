@@ -29,21 +29,7 @@ $(document).ready(function() {
     // Show register event modal
     $('.registerEventModal').on('click', function() {
         $('#registerEventModal').modal('show');
-        $.ajax({
-            url: 'controller/ajax/ajax.forms.php',
-            dataType: 'json',
-            type: 'POST',
-            data: {
-                search: 'event_types'
-            },
-            success: function(response) {
-                var options = '<option value="">Seleccione un tipo de evento</option>';
-                response.forEach(function(typeEvent) {
-                    options += '<option value="' + typeEvent.idEventType + '">' + typeEvent.name + '</option>';
-                });
-                $('#eventTypeId').html(options);
-            }
-        });
+        options();
     });
 });
 
@@ -174,10 +160,10 @@ function editEvent(idEvent) {
         url: 'controller/ajax/ajax.getEvent.php',
         method: 'POST',
         data: { idEvent: idEvent },
-        success: function(response) {
-            var event = JSON.parse(response);
+        dataType: 'json',
+        success: function(event) {
+            options(event.eventTypeId);  // Pasar el idEventType a la función options
             $('#editEventId').val(event.idEvent);
-            $('#editEventTypeId').val(event.eventTypeId);
             $('#editEventName').val(event.eventName);
             $('#editDate').val(event.date);
             $('#editLocation').val(event.location);
@@ -187,6 +173,29 @@ function editEvent(idEvent) {
             $('#editVacanciesAvailable').val(event.vacancies_available);
             $('#editDescription').val(event.description);
             $('#editEventModal').modal('show');
+        }
+    });
+}
+
+function options(selectedEventTypeId) {
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        dataType: 'json',
+        type: 'POST',
+        data: {
+            search: 'event_types'
+        },
+        success: function(response) {
+            var options = '<option value="">Seleccione un tipo de evento</option>';
+            response.forEach(function(typeEvent) {
+                options += '<option value="' + typeEvent.idEventType + '">' + typeEvent.name + '</option>';
+            });
+            $('#eventTypeId').html(options);
+            $('#editEventTypeId').html(options);
+
+            if (selectedEventTypeId) {
+                $('#editEventTypeId').val(selectedEventTypeId);
+            }
         }
     });
 }
@@ -210,7 +219,6 @@ function deleteEvent(idEvent) {
 // Show register event type modal
 $('.registerEventTypeModal').on('click', function() {
     $('#registerEventTypeModal').modal('show');
-
 });
 
 // Handle new event type registration form submission
@@ -304,6 +312,19 @@ $('#eventTypeId').on('change', function() {
         dataType: 'json',
         success: function(response) {
             $('#points').val(response.pointsPerEvent);
+        }
+    });
+});
+
+$('#editEventTypeId').on('change', function() {
+    var editEventTypeId = $('#editEventTypeId').val();
+    $.ajax({
+        type: 'POST',
+        url: 'controller/ajax/ajax.forms.php',
+        data: { search: 'event_types', eventType: editEventTypeId },
+        dataType: 'json',
+        success: function(response) {
+            $('#editPoints').val(response.pointsPerEvent);
         }
     });
 });

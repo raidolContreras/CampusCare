@@ -3,7 +3,7 @@ require_once "../../model/forms.models.php";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idEvent = $_POST['idEvent'];
-    $eventTypeId = $_POST['eventTypeId'];
+    $eventTypeId = $_POST['editEventTypeId'];
     $eventName = $_POST['eventName'];
     $date = $_POST['date'];
     $location = $_POST['location'];
