@@ -156,4 +156,8 @@ class FormsController {
         return false; // Placeholder for actual sending function
     }
 
+    public function ctrGetEvents() {
+        return FormsModel::mdlGetEvents();
+    }
+
 }

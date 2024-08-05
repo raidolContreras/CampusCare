@@ -10,7 +10,7 @@
     <div class="loader-section">
         <span class="loader"></span>
     </div>
-    <?php include 'whitelist.php'; ?>
+    <?php include 'whiteList.php'; ?>
     <script>
         document.onload = pageLoaded();
 

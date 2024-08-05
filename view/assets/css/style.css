@@ -15971,3 +15971,7 @@ body {
 .datetime, .sorting_1 {
   text-align: center;
 }
+
+.x-small {
+  font-size: x-small;
+}

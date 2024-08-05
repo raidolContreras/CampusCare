@@ -2,11 +2,6 @@
 require_once "../../model/forms.models.php";
 require_once "../forms.controller.php";
 
-if (isset($_POST['name'])) {
-    $registerUser = new FormsController();
-    $registerUser->ctrRegisterUser();
-}
-
 if (isset($_POST['search'])) {
     if ($_POST['search'] == 'areas') {
         $area = (isset($_POST['area'])) ? $_POST['area'] : null;
@@ -86,4 +81,9 @@ if (isset($_POST['matricula']) && isset($_POST['nombre']) && isset($_POST['apell
     $response = $registerStudent->ctrRegisterStudent($matricula, $nombre, $apellidos, $licenciatura, $tipoLicenciatura, $grado, $correoInstitucional, $telefonoContacto, $telefonoEmergencia, $parentesco);
 
     echo $response;
+}
+
+if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['role'])) {
+    $registerUser = new FormsController();
+    $registerUser->ctrRegisterUser();
 }

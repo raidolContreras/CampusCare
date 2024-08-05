@@ -62,6 +62,27 @@ function attachSubmitListener(formId, startTimeId, endTimeId) {
     });
 }
 
+function formatDateTime(dateTimeString) {
+    const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+    
+    const date = new Date(dateTimeString);
+    
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    
+    let hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    
+    hours = hours % 12;
+    hours = hours ? hours : 12; // la hora '0' debe ser '12'
+    
+    const minutesFormatted = minutes < 10 ? '0'+minutes : minutes;
+
+    return `${day} de ${month} del ${year}, ${hours}:${minutesFormatted} ${ampm}`;
+}
+
 function initializeDataTable() {
     return $('#eventsTable').DataTable({
         ajax: {
@@ -70,12 +91,14 @@ function initializeDataTable() {
         },
         columns: [
             { "data": "idEvent" },
-            { "data": "eventTypeId" },
+            { "data": "name" },
             { "data": "eventName" },
-            { "data": "date" },
+            { "data": null,
+                render: function (data) {
+                    return formatDateTime(data.date + ' ' +data.start_time);
+                }
+            },
             { "data": "location" },
-            { "data": "start_time" },
-            { "data": "end_time" },
             { "data": "points" },
             { "data": "vacancies_available" },
             { "data": "description" },

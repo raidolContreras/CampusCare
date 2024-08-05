@@ -11,8 +11,6 @@
                     <th>Nombre del Evento</th>
                     <th>Fecha</th>
                     <th>Ubicación</th>
-                    <th>Hora de Inicio</th>
-                    <th>Hora de Fin</th>
                     <th>Puntos</th>
                     <th>Vacantes Disponibles</th>
                     <th>Descripción</th>

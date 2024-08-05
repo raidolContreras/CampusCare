@@ -6,7 +6,7 @@ class FormsModel {
 // Users
     
     static public function mdlRegisterUser($table, $data) {
-        $stmt = Conexion::conectar()->prepare("INSERT INTO $table (firstname, email, password, role) VALUES (:firstname, :email, :password, :role)");
+        $stmt = Conexion::conectar()->prepare("INSERT INTO $table (firstname, lastname, email, password, role) VALUES (:firstname, :lastname, :email, :password, :role)");
         $stmt->bindParam(":firstname", $data["firstname"], PDO::PARAM_STR);
         $stmt->bindParam(":lastname", $data["lastname"], PDO::PARAM_STR);
         $stmt->bindParam(":email", $data["email"], PDO::PARAM_STR);
@@ -105,7 +105,7 @@ class FormsModel {
     }
 
     static public function mdlGetEvents() {
-        $stmt = Conexion::conectar()->prepare("SELECT * FROM events");
+        $stmt = Conexion::conectar()->prepare("SELECT * FROM events e LEFT JOIN event_types et ON et.idEventType = e.eventTypeId ");
         $stmt->execute();
         $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
