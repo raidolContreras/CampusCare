@@ -1,55 +1,241 @@
 $(document).ready(function() {
+    // Cuando el documento esté listo, llama a la función eventCards para cargar los eventos.
     eventCards();
 });
 
 function formatDateTime(dateTimeString) {
+    // Función para formatear una fecha y hora dada en un formato más legible.
+
     const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
     
-    const date = new Date(dateTimeString);
+    const date = new Date(dateTimeString); // Convierte la cadena de fecha y hora en un objeto Date.
+    const day = date.getDate(); // Obtiene el día del mes.
+    const month = months[date.getMonth()]; // Obtiene el mes y lo convierte a texto.
+    const year = date.getFullYear(); // Obtiene el año.
     
-    const day = date.getDate();
-    const month = months[date.getMonth()];
-    const year = date.getFullYear();
+    let hours = date.getHours(); // Obtiene la hora.
+    const minutes = date.getMinutes(); // Obtiene los minutos.
+    const ampm = hours >= 12 ? 'PM' : 'AM'; // Determina si es AM o PM.
     
-    let hours = date.getHours();
-    const minutes = date.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12 || 12; // Convierte la hora al formato de 12 horas y ajusta para que 0 sea 12.
     
-    hours = hours % 12;
-    hours = hours ? hours : 12; // la hora '0' debe ser '12'
-    
-    const minutesFormatted = minutes < 10 ? '0'+minutes : minutes;
+    const minutesFormatted = minutes < 10 ? '0' + minutes : minutes; // Formatea los minutos para que siempre tengan dos dígitos.
 
-    return `${day} de ${month} del ${year}, ${hours}:${minutesFormatted} ${ampm}`;
+    return `${day} de ${month} del ${year}, ${hours}:${minutesFormatted} ${ampm}`; // Devuelve la fecha y hora formateada.
 }
 
-// Uso dentro del AJAX success
 function eventCards() {
+    // Función para cargar y mostrar las tarjetas de eventos.
+
+    const role = $('#role').val(); // Obtiene el rol del usuario (admin, student, etc.).
+    const idStudent = $('#idStudent').val(); // Obtiene el ID del estudiante si aplica.
+
     $.ajax({
+        // Realiza una petición AJAX para obtener los datos de los eventos.
         url: 'controller/ajax/eventCards.php',
         type: 'POST',
         dataType: 'json',
         success: function(response) {
-            var eventsHtml = '';
+            let eventsHtml = ''; // Variable para almacenar el HTML generado para las tarjetas de eventos.
+            const promises = []; // Arreglo para almacenar las promesas si el rol es 'student'.
+
             response.forEach(function(event) {
-                const formattedDateTime = formatDateTime(`${event.date} ${event.start_time}`);
-                eventsHtml += `
-                <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                    <div class="card shadow-sm h-100 border-0 rounded-lg">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-primary font-weight-bold mb-3">${event.name}</h5>
-                            <p class="card-text text-muted"><i class="fas fa-map-marker-alt"></i> <strong>Lugar:</strong> ${event.location}</p>
-                            <p class="card-text mb-3 text-secondary">${event.description}</p>
-                            <hr class="my-3">
-                            <p class="card-text mb-2"><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> ${formattedDateTime}</p>
-                            <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes:</strong> ${event.vacancies_available}</p>
-                            <a href="&getEvent=${event.idEvent}" class="btn btn-primary mt-auto">Postularme</a>
-                        </div>
-                    </div>
-                </div>
-                `;
+                // Itera sobre cada evento en la respuesta.
+
+                if (role === 'student') {
+                    // Si el rol es 'student', verifica si el estudiante ya está postulado al evento.
+
+                    const promise = checkApplicationStatus(idStudent, event.idEvent).then(isApplied => {
+                        // Llama a la función checkApplicationStatus y maneja la respuesta.
+
+                        const actionHtml = isApplied 
+                            ? `<button class="btn btn-primary mt-auto" disabled>Ya postulado</button>` 
+                            : `<button onclick="applyEvent(${event.idEvent})" class="btn btn-primary mt-auto">Postularme</button>`;
+                        
+                        eventsHtml += buildEventCard(event, actionHtml); // Construye el HTML de la tarjeta con la acción correspondiente.
+                    });
+
+                    promises.push(promise); // Agrega la promesa al arreglo de promesas.
+                } else {
+                    // Si el rol no es 'student', determina las acciones disponibles según el rol.
+
+                    let actionHtml = '';
+                    if (role === 'admin') {
+                        // Si el rol es 'admin', agrega botones para editar y borrar el evento.
+                        actionHtml = `
+                            <div class="btn-group" role="group" aria-label="Acciones">
+                                <button onclick="editEvent(${event.idEvent})" class="btn btn-primary mt-auto">Editar evento</button> 
+                                <button onclick="deleteEvent(${event.idEvent})" class="btn btn-danger mt-auto">Borrar evento</button>
+                            </div>`;
+                    } else {
+                        // Si el rol es otro (por ejemplo, un usuario regular), agrega un botón para ver el evento.
+                        actionHtml = `<button onclick="lookEvent(${event.idEvent})" class="btn btn-primary mt-auto">Ver evento</button>`;
+                    }
+                    eventsHtml += buildEventCard(event, actionHtml); // Construye el HTML de la tarjeta con la acción correspondiente.
+                }
             });
-            $('.events').html(eventsHtml);
+
+            if (role === 'student') {
+                // Si el rol es 'student', espera a que todas las promesas se resuelvan antes de actualizar el HTML.
+                Promise.all(promises).then(() => updateEventsHtml(eventsHtml));
+            } else {
+                // Si el rol no es 'student', actualiza el HTML directamente.
+                updateEventsHtml(eventsHtml);
+            }
         }
+    });
+}
+
+function checkApplicationStatus(idStudent, idEvent) {
+    // Función para verificar si un estudiante ya está postulado a un evento.
+
+    return $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        type: 'POST',
+        data: {
+            search: 'event',
+            action: 'checkApplication',
+            idStudent: idStudent,
+            idEvent: idEvent
+        },
+        dataType: 'json'
+    });
+}
+
+function buildEventCard(event, actionHtml) {
+    // Función para construir el HTML de una tarjeta de evento.
+
+    const formattedDateTime = formatDateTime(`${event.date} ${event.start_time}`); // Formatea la fecha y hora del evento.
+
+    // Devuelve el HTML de la tarjeta de evento con los detalles y la acción correspondiente.
+    return `
+        <div class="col-lg-4 col-sm-6 col-12 mb-4">
+            <div class="card shadow-sm h-100 border-0 rounded-lg">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-primary font-weight-bold mb-3">${event.name}</h5>
+                    <p class="card-text text-muted"><i class="fas fa-map-marker-alt"></i> <strong>Lugar:</strong> ${event.location}</p>
+                    <p class="card-text mb-3 text-secondary">${event.description}</p>
+                    <hr class="my-3">
+                    <p class="card-text mb-2"><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> ${formattedDateTime}</p>
+                    <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes:</strong> ${event.vacancies_available}</p>
+                    ${actionHtml}
+                </div>
+            </div>
+        </div>`;
+}
+
+function updateEventsHtml(htmlContent) {
+    // Función para actualizar el HTML de la lista de eventos.
+
+    $('.events').html(htmlContent); // Inserta el contenido HTML en el contenedor de eventos.
+}
+
+function applyEvent(idEvent) {
+    // Función para postularse a un evento.
+
+    const idStudent = $('#idStudent').val(); // Obtiene el ID del estudiante.
+
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        type: 'POST',
+        data: { idEvent: idEvent, search: 'event', idStudent: idStudent, action: 'applyEvent'},
+        success: function(response) {
+            // Maneja la respuesta del servidor después de intentar postularse al evento.
+
+            $('#applyEventModal .modal-body').html(response 
+                ? '<p>Te has postulado exitosamente al evento.</p>' 
+                : '<p>Hubo un problema al postularte. Intenta de nuevo.</p>'
+            );
+            $('#applyEventModal').modal('show'); // Muestra un modal con el resultado.
+
+            eventCards(); // Recarga la lista de eventos para reflejar el estado actualizado.
+        }
+    });
+}
+
+function editEvent(idEvent) {
+    // Función para editar un evento.
+
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        type: 'POST',
+        data: { idEvent: idEvent },
+        dataType: 'json',
+        success: function(event) {
+            // Rellena los campos del modal de edición con los datos del evento.
+
+            $('#editEventModalLabel').text(`Editar Evento: ${event.name}`);
+            $('#editEventModal .modal-body').html(`
+                <form id="editEventForm">
+                    <div class="form-group">
+                        <label for="eventName">Nombre del Evento</label>
+                        <input type="text" class="form-control" id="eventName" value="${event.name}">
+                    </div>
+                    <div class="form-group">
+                        <label for="eventLocation">Lugar</label>
+                        <input type="text" class="form-control" id="eventLocation" value="${event.location}">
+                    </div>
+                    <div class="form-group">
+                        <label for="eventDescription">Descripción</label>
+                        <textarea class="form-control" id="eventDescription">${event.description}</textarea>
+                    </div>
+                    <!-- Puedes agregar más campos si es necesario -->
+                </form>
+            `);
+            $('#editEventModal').modal('show'); // Muestra el modal de edición.
+
+            $('#editEventModal .btn-primary').off('click').on('click', function() {
+                // Maneja la acción de guardar los cambios cuando se hace clic en el botón de guardar.
+
+                const editedEvent = {
+                    idEvent: idEvent,
+                    name: $('#eventName').val(),
+                    location: $('#eventLocation').val(),
+                    description: $('#eventDescription').val()
+                };
+
+                $.ajax({
+                    url: 'controller/ajax/editEvent.php',
+                    type: 'POST',
+                    data: editedEvent,
+                    success: function(response) {
+                        // Si la edición es exitosa, cierra el modal y recarga la lista de eventos.
+
+                        if(response.success) {
+                            $('#editEventModal').modal('hide');
+                            eventCards(); // Recarga la lista de eventos.
+                        } else {
+                            alert('Hubo un problema al editar el evento.');
+                        }
+                    }
+                });
+            });
+        }
+    });
+}
+
+function deleteEvent(idEvent) {
+    // Función para borrar un evento.
+
+    $('#deleteEventModal').modal('show'); // Muestra un modal para confirmar la eliminación.
+
+    $('#deleteEventModal .btn-danger').off('click').on('click', function() {
+        // Maneja la acción de confirmación cuando se hace clic en el botón de eliminar.
+
+        $.ajax({
+            url: 'controller/ajax/ajax.forms.php',
+            type: 'POST',
+            data: { idEvent: idEvent },
+            success: function(response) {
+                // Si la eliminación es exitosa, cierra el modal y recarga la lista de eventos.
+
+                if(response.success) {
+                    $('#deleteEventModal').modal('hide');
+                    eventCards(); // Recarga la lista de eventos.
+                } else {
+                    alert('Hubo un problema al borrar el evento.');
+                }
+            }
+        });
     });
 }

@@ -31,6 +31,12 @@
 				?>
 				</h6>
 			</li>
+			<input type="hidden" id="role" value="<?php echo $_SESSION["user"]['role'] ?>">
+			<?php if ($_SESSION["user"]['role'] == 'student'):?>
+				<input type="hidden" id="idStudent" value="<?php echo $_SESSION["user"]['idStudent'] ?>">
+			<?php else: ?>
+				<input type="hidden" id="idUser" value="<?php echo $_SESSION["user"]['idUser'] ?>">
+			<?php endif ?>
 			<li class="nav-item">
 				<a class="nav-link px-3" href="" onclick="logout()">
 					<i class="fas fa-sign-out-alt"></i> Cerrar sesión

@@ -184,6 +184,19 @@ if (isset($_POST['search'])) {
         $degrees = $searchDegrees->ctrSearchDegrees($degree);
         echo json_encode($degrees);
     }
+
+    if ($_POST['search'] == 'event') {
+        $event = (isset($_POST['idEvent']))? $_POST['idEvent'] : null;
+        $searchEvents = new FormsController();
+        if ($_POST['action'] == 'applyEvent') {
+            $events = $searchEvents->ctrApplyEvent($_POST['idEvent'], $_POST['idStudent']);
+        } elseif ($_POST['action'] == 'checkApplication') {
+            $events = $searchEvents->ctrCheckApplicationEvent($_POST['idEvent'], $_POST['idStudent']);
+        } else {
+            $events = $searchEvents->ctrSearchEvents($event);
+        }
+        echo json_encode($events);
+    }
 }
 
 if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['role'])) {

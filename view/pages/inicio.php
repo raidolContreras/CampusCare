@@ -11,4 +11,7 @@
 
 </div>
 </div>
+<?php
+    include 'view/pages/modals/dashboardModal.php';
+?>
 <script src="view/assets/js/ajax/inicio.js"></script>

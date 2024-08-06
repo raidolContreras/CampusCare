@@ -113,6 +113,27 @@ class FormsModel {
         return $response;
     }
 
+    static public function mdlApplyEvent($idEvent, $idStudent) {
+        $stmt = Conexion::conectar()->prepare("INSERT INTO students_events (idEvent, idStudent) VALUES (:idEvent, :idStudent)");
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_INT);
+        $response = $stmt->execute();
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlCheckApplicationEvent($idEvent, $idStudent) {
+        $stmt = Conexion::conectar()->prepare("SELECT * FROM students_events WHERE idEvent = :idEvent AND idStudent = :idStudent");
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetch(PDO::FETCH_ASSOC);
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
     static public function mdlAddEvent($eventTypeId, $eventName, $date, $location, $start_time, $end_time, $points, $vacancies_available, $description) {
         $stmt = Conexion::conectar()->prepare("
             INSERT INTO events 

@@ -145,13 +145,14 @@ class FormsController {
         return false; // Placeholder for actual sending function
     }
 
-    public function ctrGetEvents() {
+    public function ctrGetEvents($idStudent) {
         return FormsModel::mdlGetEvents();
     }
 
     static public function ctrAddDegree($data) {
         return FormsModel::mdlAddDegree($data);
     }
+
     static public function ctrSearchDegrees($idDegree) {
         return FormsModel::mdlSearchDegrees($idDegree);
     }
@@ -162,5 +163,13 @@ class FormsController {
 
     static public function ctrEditStudent($data) {
         return FormsModel::mdlEditStudent($data);
+    }
+
+    static public function ctrApplyEvent($idEvent, $idStudent) {
+        return FormsModel::mdlApplyEvent($idEvent, $idStudent);
+    }
+
+    static public function ctrCheckApplicationEvent($idEvent, $idStudent) {
+        return FormsModel::mdlCheckApplicationEvent($idEvent, $idStudent);
     }
 }
