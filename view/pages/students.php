@@ -1,6 +1,6 @@
 <div class="container">
     <h2>Estudiantes Registrados</h2>
-    <button class="btn btn-primary mb-3 registerEventModal">Registrar Estudiante Nuevo</button>
+    <button class="btn btn-primary mb-3 registerStudentModal">Registrar Estudiante Nuevo</button>
     <div class="table-responsive">
         <table id="studentsTable" class="table table-striped table-bordered">
             <thead>

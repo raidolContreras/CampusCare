@@ -44,60 +44,23 @@
             background-color: white;
         }
 
-        .btn-primary {
-            margin-top: 1rem;
-            border: none;
-            font-size: 1.2rem;
-            transition: background-color 0.2s ease-in-out, transform 0.2s ease;
-        }
-
         .btn-primary:hover {
+            color: #fff;
+            background-color: #01643D; 
+            border-color: #01643D;
+        }
+
+        .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+            color: #fff;
+            background-color: #1b4434;
+            border-color: #01643D;
+        }
+
+        .btn-primary.focus, .btn-primary:focus {
+            color: #fff;
             background-color: #01643D;
-            transform: scale(1.05);
-        }
-
-        .form-control.is-invalid {
-            border-color: #dc3545;
-        }
-
-        .form-control.is-valid {
-            border-color: #28a745;
-        }
-
-        .invalid-feedback {
-            display: none;
-            color: #dc3545;
-        }
-
-        .valid-feedback {
-            display: none;
-            color: #28a745;
-        }
-
-        .form-control.is-invalid ~ .invalid-feedback {
-            display: block;
-        }
-
-        .form-control.is-valid ~ .valid-feedback {
-            display: block;
-        }
-
-        .form-control.is-invalid ~ .fas.fa-exclamation-circle {
-            color: #dc3545;
-            display: inline-block;
-        }
-
-        .form-control.is-valid ~ .fas.fa-check-circle {
-            color: #28a745;
-            display: inline-block;
-        }
-
-        .fas.fa-exclamation-circle,
-        .fas.fa-check-circle {
-            display: none;
-            position: absolute;
-            right: 10px;
-            top: calc(50% - 10px);
+            border-color: #01643D;
+            box-shadow: 0px 0px 17px 0px rgba(10,102,39,0.18);
         }
 
         .tooltip-inner {
@@ -174,79 +137,163 @@
             <div class="card-header text-center">
                 Registro de Estudiante
             </div>
-            <div class="card-body">
-                <form id="registerStudentForm">
-                    <div class="form-row">
-                        <div class="col-md-6 form-group position-relative">
-                            <label for="matricula" class="form-label">Matrícula <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Ingresa tu matrícula de estudiante"></i></label>
-                            <input type="text" class="form-control" id="matricula" name="matricula" placeholder="Ingresa tu matrícula" required>
-                            <i class="fas fa-exclamation-circle"></i>
-                            <i class="fas fa-check-circle"></i>
-                            <div class="invalid-feedback">La matrícula debe contener solo números.</div>
-                            <div class="valid-feedback">Matrícula válida.</div>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label for="nombre" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa tu nombre" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-6 form-group">
-                            <label for="apellidos" class="form-label">Apellidos</label>
-                            <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="Ingresa tus apellidos" required>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label for="licenciatura" class="form-label">Licenciatura</label>
-                            <input type="text" class="form-control" id="licenciatura" name="licenciatura" placeholder="Ingresa tu licenciatura" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-6 form-group">
-                            <label for="tipoLicenciatura" class="form-label">Tipo de Licenciatura</label>
-                            <select class="form-control" id="tipoLicenciatura" name="tipoLicenciatura" required>
-                                <option value="semestre">Semestre</option>
-                                <option value="cuatrimestre">Cuatrimestre</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label for="grado" class="form-label">Grado</label>
-                            <input type="number" class="form-control" id="grado" name="grado" placeholder="Ingresa tu grado" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-6 form-group position-relative">
-                            <label for="correoInstitucional" class="form-label">Correo Institucional <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Debe ser de la forma @unimontrer.edu.mx"></i></label>
-                            <input type="email" class="form-control" id="correoInstitucional" name="correoInstitucional" placeholder="correo@unimontrer.edu.mx" required>
-                            <i class="fas fa-exclamation-circle"></i>
-                            <i class="fas fa-check-circle"></i>
-                            <div class="invalid-feedback">El correo debe ser de la forma @unimontrer.edu.mx.</div>
-                            <div class="valid-feedback">Correo válido.</div>
-                        </div>
-                        <div class="col-md-6 form-group position-relative">
-                            <label for="telefonoContacto" class="form-label">Teléfono de Contacto <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Debe contener 10 dígitos"></i></label>
-                            <input type="tel" class="form-control" id="telefonoContacto" name="telefonoContacto" placeholder="Ingresa tu teléfono de contacto" required>
-                            <i class="fas fa-exclamation-circle"></i>
-                            <i class="fas fa-check-circle"></i>
-                            <div class="invalid-feedback">El teléfono de contacto debe contener 10 dígitos.</div>
-                            <div class="valid-feedback">Teléfono válido.</div>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="col-md-6 form-group position-relative">
-                            <label for="telefonoEmergencia" class="form-label">Teléfono de Emergencia <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Debe contener 10 dígitos"></i></label>
-                            <input type="tel" class="form-control" id="telefonoEmergencia" name="telefonoEmergencia" placeholder="Ingresa tu teléfono de emergencia" required>
-                            <i class="fas fa-exclamation-circle"></i>
-                            <i class="fas fa-check-circle"></i>
-                            <div class="invalid-feedback">El teléfono de emergencia debe contener 10 dígitos.</div>
-                            <div class="valid-feedback">Teléfono válido.</div>
-                        </div>
-                        <div class="col-md-6 form-group">
-                            <label for="parentesco" class="form-label">Parentesco</label>
-                            <input type="text" class="form-control" id="parentesco" name="parentesco" placeholder="Ingresa tu parentesco" required>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">Registrar</button>
-                </form>
+            <div class="card-body"><form id="registerStudentForm">
+    <div class="step" id="step-1">
+        <h4>Paso 1: Información Personal</h4>
+        <div class="form-row">
+            <div class="col-md-6 form-group position-relative">
+                <label for="matricula" class="form-label">Matrícula <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Ingresa tu matrícula de estudiante"></i></label>
+                <input type="text" class="form-control" id="matricula" name="matricula" placeholder="Ingresa tu matrícula" required>
+                <div class="invalid-feedback">La matrícula debe contener solo números.</div>
+                <div class="valid-feedback">Matrícula válida.</div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="nombre" class="form-label">Nombre *</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" placeholder="Ingresa tu nombre" required>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="apellidoPaterno" class="form-label">Apellido paterno *</label>
+                <input type="text" class="form-control" id="apellidoPaterno" name="apellidoPaterno" placeholder="Ingresa tu apellido paterno" required>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="apellidoMaterno" class="form-label">Apellido materno</label>
+                <input type="text" class="form-control" id="apellidoMaterno" name="apellidoMaterno" placeholder="Ingresa tu apellido materno">
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="diaNacimiento" class="form-label">Día de nacimiento</label>
+                <input type="number" class="form-control" id="diaNacimiento" name="diaNacimiento" placeholder="Día" min="1" max="31" required>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="mesNacimiento" class="form-label">Mes de nacimiento</label>
+                <input type="number" class="form-control" id="mesNacimiento" name="mesNacimiento" placeholder="Mes" min="1" max="12" required>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="anioNacimiento" class="form-label">Año de nacimiento</label>
+                <input type="number" class="form-control" id="anioNacimiento" name="anioNacimiento" placeholder="Año" required>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="genero" class="form-label">Género</label>
+                <select class="form-select" id="genero" name="genero" required>
+                    <option value="1">Masculino</option>
+                    <option value="2">Femenino</option>
+                    <option value="0">Otro</option>
+                </select>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary next-step">Siguiente</button>
+    </div>
+
+    <div class="step d-none" id="step-2">
+        <h4>Paso 2: Dirección</h4>
+        <div class="form-row">
+            <div class="col-md-6 form-group">
+                <label for="calle" class="form-label">Calle</label>
+                <input type="text" class="form-control" id="calle" name="calle" placeholder="Ingresa tu calle" required>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="numeroInterior" class="form-label">Número Interior</label>
+                <input type="text" class="form-control" id="numeroInterior" name="numeroInterior" placeholder="Ingresa tu número interior" required>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="numeroExterior" class="form-label">Número Exterior</label>
+                <input type="text" class="form-control" id="numeroExterior" name="numeroExterior" placeholder="Ingresa tu número exterior">
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="colonia" class="form-label">Fraccionamiento/Colonia</label>
+                <input type="text" class="form-control" id="colonia" name="colonia" placeholder="Ingresa tu colonia" required>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="codigoPostal" class="form-label">Código Postal</label>
+                <input type="text" class="form-control" id="codigoPostal" name="codigoPostal" placeholder="Ingresa tu código postal" required>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary prev-step">Anterior</button>
+        <button type="button" class="btn btn-primary next-step">Siguiente</button>
+    </div>
+
+    <div class="step d-none" id="step-3">
+        <h4>Paso 3: Datos Académicos y Contacto</h4>
+        <div class="form-row">
+            <div class="col-md-6 form-group">
+                <label for="licenciatura" class="form-label">Licenciatura</label>
+                <select class="form-select" id="licenciatura" name="licenciatura" required>
+                </select>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="tipoLicenciatura" class="form-label">Tipo de Licenciatura</label>
+                <select class="form-select" id="tipoLicenciatura" name="tipoLicenciatura" required>
+                    <option value="semestral">Semestral</option>
+                    <option value="cuatrimestral">Cuatrimestral</option>
+                </select>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="grado" class="form-label">Grado</label>
+                <input type="number" class="form-control" id="grado" name="grado" placeholder="Ingresa tu grado" required>
+            </div>
+            <div class="col-md-6 form-group position-relative">
+                <label for="correoInstitucional" class="form-label">Correo Institucional <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Debe ser de la forma @unimontrer.edu.mx"></i></label>
+                <input type="email" class="form-control" id="correoInstitucional" name="correoInstitucional" placeholder="correo@unimontrer.edu.mx" required>
+                <div class="invalid-feedback">El correo debe ser de la forma @unimontrer.edu.mx.</div>
+                <div class="valid-feedback">Correo válido.</div>
+            </div>
+            <div class="col-md-6 form-group position-relative">
+                <label for="telefonoContacto" class="form-label">Celular del alumno <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Debe contener 10 dígitos"></i></label>
+                <input type="tel" class="form-control" id="telefonoContacto" name="telefonoContacto" placeholder="Ingresa tu teléfono de contacto" required>
+                <div class="invalid-feedback">El teléfono de contacto debe contener 10 dígitos.</div>
+                <div class="valid-feedback">Teléfono válido.</div>
+            </div>
+            <div class="col-md-6 form-group position-relative">
+                <label for="telefonoEmergencia" class="form-label">Teléfono de Emergencia <i class="fas fa-question-circle" data-toggle="tooltip" data-placement="top" title="Debe contener 10 dígitos"></i></label>
+                <input type="tel" class="form-control" id="telefonoEmergencia" name="telefonoEmergencia" placeholder="Ingresa tu teléfono de emergencia" required>
+                <div class="invalid-feedback">El teléfono de emergencia debe contener 10 dígitos.</div>
+                <div class="valid-feedback">Teléfono válido.</div>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="parentesco" class="form-label">Parentesco</label>
+                <input type="text" class="form-control" id="parentesco" name="parentesco" placeholder="Ingresa tu parentesco" required>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary prev-step">Anterior</button>
+        <button type="submit" class="btn btn-primary w-100" id="submitBtn">Registrar</button>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        let currentStep = 0;
+        const steps = document.querySelectorAll('.step');
+        const nextBtns = document.querySelectorAll('.next-step');
+        const prevBtns = document.querySelectorAll('.prev-step');
+
+        function showStep(stepIndex) {
+            steps.forEach((step, index) => {
+                step.classList.toggle('d-none', index !== stepIndex);
+            });
+        }
+
+        nextBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                if (currentStep < steps.length - 1) {
+                    currentStep++;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        prevBtns.forEach(btn => {
+            btn.addEventListener('click', function () {
+                if (currentStep > 0) {
+                    currentStep--;
+                    showStep(currentStep);
+                }
+            });
+        });
+
+        showStep(currentStep);
+    });
+</script>
+
+
                 <div class="alert alert-success mt-3 alert-hide" id="successMessage">
                     <button type="button" class="close" onclick="hideAlert('successMessage')">&times;</button>
                     <i class="fas fa-check-circle alert-icon"></i>
@@ -274,6 +321,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
         $(document).ready(function () {
+            licenciatura();
             $('[data-toggle="tooltip"]').tooltip();
 
             const phoneRegex = /^\d{10}$/;
@@ -315,15 +363,19 @@
                     const submitBtn = $('#submitBtn');
                     submitBtn.prop('disabled', true).addClass('btn-loading').text('Enviando');
 
+                    var formData = $(this).serializeArray(); // Serializa el formulario a un array de objetos
+                    formData.push({ name: 'search', value: 'student' });
+                    formData.push({ name: 'action', value: 'addStudent' });
+
                     $.ajax({
                         url: 'controller/ajax/ajax.forms.php',
                         method: 'POST',
-                        data: $(this).serialize(),
+                        data: formData,
                         success: function (response) {
                             submitBtn.prop('disabled', false).removeClass('btn-loading').text('Registrar');
-                            if (response === 'success') {
+                            if (response === '"success"') {
                                 showAlert('successMessage');
-                            } else if (response === 'duplicate') {
+                            } else if (response === '"duplicate"') {
                                 showAlert('duplicateMessage');
                             } else {
                                 showAlert('errorMessage');
@@ -332,6 +384,7 @@
                     });
                 }
             });
+
 
             function validateForm() {
                 let isValid = true;
@@ -367,14 +420,32 @@
                 const alertElement = $('#' + messageId);
                 alertElement.removeClass('alert-hide').addClass('alert-show');
                 setTimeout(function () {
-                    alertElement.addClass('alert-hide').removeClass('alert-show');
-                }, 5000);
+                    window.location.reload();
+                }, 3000);
             }
 
             window.hideAlert = function(messageId) {
                 $('#' + messageId).addClass('alert-hide').removeClass('alert-show');
             }
         });
+        function licenciatura() {
+            $.ajax({
+                type: 'POST',
+                url: "controller/ajax/ajax.forms.php",
+                dataSrc: '',
+                data: {
+                    search: 'degrees'
+                },
+                dataType: 'json',
+                success: function (response) {
+                    let options = '<option value="">Seleccione licenciatura</option>';
+                    $.each(response, function (index, item) {
+                        options += '<option value="' + item.idDegree + '">' + item.nameDegree + '</option>';
+                    });
+                    $('#licenciatura').html(options);
+                }
+            });
+        }
     </script>
 </body>
 

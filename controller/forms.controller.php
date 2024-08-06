@@ -93,25 +93,6 @@ class FormsController {
     public function ctrDeleteCourse($deleteCourse) {
         return FormsModel::mdlDeleteCourse($deleteCourse);
     }
-
-    public function ctrRegisterStudent($matricula, $nombre, $apellidos, $licenciatura, $tipoLicenciatura, $grado, $correoInstitucional, $telefonoContacto, $telefonoEmergencia, $parentesco) {
-        $table = "student";
-        $data = array(
-            "matricula" => $matricula,
-            "firstname" => $nombre,
-            "lastname" => $apellidos,
-            "licenciatura" => $licenciatura,
-            "type_lic" => $tipoLicenciatura,
-            "grado" => $grado,
-            "email" => $correoInstitucional,
-            "phone" => $telefonoContacto,
-            "emergenci_phone" => $telefonoEmergencia,
-            "parent" => $parentesco
-        );
-
-        $response = FormsModel::mdlRegisterStudent($table, $data);
-        return $response;
-    }
     
     public function ctrSearchStudents($student) {
         return FormsModel::mdlSearchStudents($student);
@@ -132,6 +113,14 @@ class FormsController {
             // }
         }
         return $password;
+    }
+    
+    public function ctrDenegateStudent($idStudent) {
+        return FormsModel::mdlDenegateStudent($idStudent);
+    }
+    
+    public function ctrDropStudent($idStudent, $reason) {
+        return FormsModel::mdlDropStudent($idStudent, $reason);
     }
 
     private function generateRandomPassword($length = 10) {
@@ -160,4 +149,18 @@ class FormsController {
         return FormsModel::mdlGetEvents();
     }
 
+    static public function ctrAddDegree($data) {
+        return FormsModel::mdlAddDegree($data);
+    }
+    static public function ctrSearchDegrees($idDegree) {
+        return FormsModel::mdlSearchDegrees($idDegree);
+    }
+
+    static public function ctrRegisterStudent($data) {
+        return FormsModel::mdlRegisterStudent($data);
+    }
+
+    static public function ctrEditStudent($data) {
+        return FormsModel::mdlEditStudent($data);
+    }
 }

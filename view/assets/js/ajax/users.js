@@ -93,6 +93,7 @@ function deleteUser(id) {
                 alert(response);
                 if (response === 'success') {
                     table.ajax.reload();
+                    
                 }
             }
         });

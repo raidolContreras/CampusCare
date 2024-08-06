@@ -41,6 +41,14 @@ function setActiveClass($pageName, $currentPage) {
                             <div class="col-8">Cursos</div> 
                         </div>
                     </a>
+                    <a href="degrees" class="mt-1 menu-top py-2 <?= setActiveClass('degrees', $pagina) ?>">
+                        <div class="row">
+                            <div class="col-2">
+                                <i class="fad fa-graduation-cap"></i>
+                            </div>
+                            <div class="col-8">Licenciaturas</div> 
+                        </div>
+                    </a>
                     <a href="areas" class="mt-1 menu-top py-2 <?= setActiveClass('areas', $pagina) ?>">
                         <div class="row">
                             <div class="col-2">

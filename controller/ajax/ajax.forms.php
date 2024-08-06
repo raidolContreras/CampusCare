@@ -54,36 +54,151 @@ if (isset($_POST['search'])) {
         $student = (isset($_POST['idStudent']))? $_POST['idStudent'] : null;
         $searchStudents = new FormsController();
         if (isset($_POST['action'])) {
+
             if ($_POST['action'] == 'acceptStudent') {
+
                 $students = $searchStudents->ctrAcceptStudent($_POST['idStudent']);
+
+            } elseif ($_POST['action'] == 'denegateStudent') {
+
+                $students = $searchStudents->ctrDenegateStudent($_POST['idStudent']);
+
+            } elseif ($_POST['action'] == 'dropStudent') {
+
+                $students = $searchStudents->ctrDropStudent($_POST['idStudent'], $_POST['reason']);
+                
+            } elseif ($_POST['action'] == 'getStudent') {
+
+                $students = $searchStudents->ctrSearchStudents($student);
+
+            } elseif ($_POST['action'] == 'addStudent') {
+
+                $matricula = $_POST['matricula'];
+                $nombre = $_POST['nombre'];
+                $apellidos = ($_POST['apellidoMaterno'] != '') ? $_POST['apellidoPaterno'] . ' ' . $_POST['apellidoMaterno'] : $_POST['apellidoPaterno'];
+                $licenciatura = $_POST['licenciatura'];
+                $tipoLicenciatura = $_POST['tipoLicenciatura'];
+                $grado = $_POST['grado'];
+                $correoInstitucional = $_POST['correoInstitucional'];
+                $telefonoContacto = $_POST['telefonoContacto'];
+                $telefonoEmergencia = $_POST['telefonoEmergencia'];
+                $parentesco = $_POST['parentesco'];
+
+                // Aquí puedes agregar el resto de los campos
+                $calle = $_POST['calle'];
+                $numeroInterior = $_POST['numeroInterior'];
+                $numeroExterior = $_POST['numeroExterior'];
+                $colonia = $_POST['colonia'];
+                $codigoPostal = $_POST['codigoPostal'];
+                $diaNacimiento = $_POST['diaNacimiento'];
+                $mesNacimiento = $_POST['mesNacimiento'];
+                $anioNacimiento = $_POST['anioNacimiento'];
+                $genero = $_POST['genero'];
+
+                $data = array(
+                    'matricula' => $matricula,
+                    'nombre' => $nombre,
+                    'apellidos' => $apellidos,
+                    'licenciatura' => $licenciatura,
+                    'tipoLicenciatura' => $tipoLicenciatura,
+                    'grado' => $grado,
+                    'correoInstitucional' => $correoInstitucional,
+                    'telefonoContacto' => $telefonoContacto,
+                    'telefonoEmergencia' => $telefonoEmergencia,
+                    'parentesco' => $parentesco,
+                    'calle' => $calle,
+                    'numeroInterior' => $numeroInterior,
+                    'numeroExterior' => $numeroExterior,
+                    'colonia' => $colonia,
+                    'codigoPostal' => $codigoPostal,
+                    'diaNacimiento' => $diaNacimiento,
+                    'mesNacimiento' => $mesNacimiento,
+                    'anioNacimiento' => $anioNacimiento,
+                    'genero' => $genero
+                );
+
+                $students = $searchStudents->ctrRegisterStudent($data);
+            } elseif ($_POST['action'] == 'editStudent') {
+
+                $matricula = $_POST['matricula'];
+                $nombre = $_POST['firstname'];
+                $apellidos = $_POST['lastname'];
+                $licenciatura = $_POST['licenciatura'];
+                $tipoLicenciatura = $_POST['tipoLicenciatura'];
+                $grado = $_POST['grado'];
+                $correoInstitucional = $_POST['correoInstitucional'];
+                $telefonoContacto = $_POST['telefonoContacto'];
+                $telefonoEmergencia = $_POST['telefonoEmergencia'];
+                $parentesco = $_POST['parentesco'];
+
+                // Aquí puedes agregar el resto de los campos
+                $calle = $_POST['calle'];
+                $numeroInterior = $_POST['numeroInterior'];
+                $numeroExterior = $_POST['numeroExterior'];
+                $colonia = $_POST['colonia'];
+                $codigoPostal = $_POST['codigoPostal'];
+                $diaNacimiento = $_POST['diaNacimiento'];
+                $mesNacimiento = $_POST['mesNacimiento'];
+                $anioNacimiento = $_POST['anioNacimiento'];
+                $genero = $_POST['genero'];
+                $idStudent = $_POST['idStudent'];
+
+                $data = array(
+                    'matricula' => $matricula,
+                    'nombre' => $nombre,
+                    'apellidos' => $apellidos,
+                    'licenciatura' => $licenciatura,
+                    'tipoLicenciatura' => $tipoLicenciatura,
+                    'grado' => $grado,
+                    'correoInstitucional' => $correoInstitucional,
+                    'telefonoContacto' => $telefonoContacto,
+                    'telefonoEmergencia' => $telefonoEmergencia,
+                    'parentesco' => $parentesco,
+                    'calle' => $calle,
+                    'numeroInterior' => $numeroInterior,
+                    'numeroExterior' => $numeroExterior,
+                    'colonia' => $colonia,
+                    'codigoPostal' => $codigoPostal,
+                    'diaNacimiento' => $diaNacimiento,
+                    'mesNacimiento' => $mesNacimiento,
+                    'anioNacimiento' => $anioNacimiento,
+                    'genero' => $genero,
+                    'idStudent' => $idStudent,
+                );
+
+                $students = $searchStudents->ctrEditStudent($data);
+
+            } else {
+                $students = 'none';
             }
+
         } else {
             $students = $searchStudents->ctrSearchStudents($student);
         }
         echo json_encode($students);
     }
-}
 
-// Añadir funcionalidad de registro de estudiantes
-if (isset($_POST['matricula']) && isset($_POST['nombre']) && isset($_POST['apellidos']) && isset($_POST['licenciatura']) && isset($_POST['tipoLicenciatura']) && isset($_POST['grado']) && isset($_POST['correoInstitucional']) && isset($_POST['telefonoContacto']) && isset($_POST['telefonoEmergencia']) && isset($_POST['parentesco'])) {
-    $matricula = $_POST['matricula'];
-    $nombre = $_POST['nombre'];
-    $apellidos = $_POST['apellidos'];
-    $licenciatura = $_POST['licenciatura'];
-    $tipoLicenciatura = $_POST['tipoLicenciatura'];
-    $grado = $_POST['grado'];
-    $correoInstitucional = $_POST['correoInstitucional'];
-    $telefonoContacto = $_POST['telefonoContacto'];
-    $telefonoEmergencia = $_POST['telefonoEmergencia'];
-    $parentesco = $_POST['parentesco'];
-
-    $registerStudent = new FormsController();
-    $response = $registerStudent->ctrRegisterStudent($matricula, $nombre, $apellidos, $licenciatura, $tipoLicenciatura, $grado, $correoInstitucional, $telefonoContacto, $telefonoEmergencia, $parentesco);
-
-    echo $response;
+    if ($_POST['search'] == 'degrees') {
+        $degree = (isset($_POST['idDegree']))? $_POST['idDegree'] : null;
+        $searchDegrees = new FormsController();
+        $degrees = $searchDegrees->ctrSearchDegrees($degree);
+        echo json_encode($degrees);
+    }
 }
 
 if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['role'])) {
     $registerUser = new FormsController();
     $registerUser->ctrRegisterUser();
+}
+
+if (isset($_POST['nombreLicenciatura']) && isset($_POST['puntajeMinimo'])) {
+
+    $data = array(
+        "nameDegree" => $_POST['nombreLicenciatura'],
+        "minPoints" => $_POST['puntajeMinimo']
+    );
+    $registerDegree = new FormsController();
+    $response = $registerDegree->ctrAddDegree($data);
+
+    echo $response;
 }
