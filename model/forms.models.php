@@ -674,4 +674,23 @@ class FormsModel {
         return $response;
     }
 
+    static public function mdlSearchEvents($idEvent) {
+        if ($idEvent == null) {
+            $sql = "SELECT * FROM events ORDER BY dateEvent ASC";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->execute();
+            $response = $stmt->fetchAll();
+        } else {
+            $sql = "SELECT * FROM events WHERE idEvent = :idEvent";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+            $stmt->execute();
+            $response = $stmt->fetch();
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
 }

@@ -154,62 +154,64 @@ function applyEvent(idEvent) {
 }
 
 function editEvent(idEvent) {
-    // Función para editar un evento.
-
     $.ajax({
-        url: 'controller/ajax/ajax.forms.php',
-        type: 'POST',
+        url: 'controller/ajax/ajax.getEvent.php',
+        method: 'POST',
         data: { idEvent: idEvent },
         dataType: 'json',
         success: function(event) {
-            // Rellena los campos del modal de edición con los datos del evento.
+            options(event.eventTypeId);  // Pasar el idEventType a la función options
+            $('#editEventId').val(event.idEvent);
+            $('#editEventName').val(event.eventName);
+            $('#editDate').val(event.date);
+            $('#editLocation').val(event.location);
+            $('#editStartTime').val(event.start_time);
+            $('#editEndTime').val(event.end_time);
+            $('#editPoints').val(event.points);
+            $('#editVacanciesAvailable').val(event.vacancies_available);
+            $('#editDescription').val(event.description);
+            $('#editEventModal').modal('show');
+        }
+    });
+}
 
-            $('#editEventModalLabel').text(`Editar Evento: ${event.name}`);
-            $('#editEventModal .modal-body').html(`
-                <form id="editEventForm">
-                    <div class="form-group">
-                        <label for="eventName">Nombre del Evento</label>
-                        <input type="text" class="form-control" id="eventName" value="${event.name}">
-                    </div>
-                    <div class="form-group">
-                        <label for="eventLocation">Lugar</label>
-                        <input type="text" class="form-control" id="eventLocation" value="${event.location}">
-                    </div>
-                    <div class="form-group">
-                        <label for="eventDescription">Descripción</label>
-                        <textarea class="form-control" id="eventDescription">${event.description}</textarea>
-                    </div>
-                    <!-- Puedes agregar más campos si es necesario -->
-                </form>
-            `);
-            $('#editEventModal').modal('show'); // Muestra el modal de edición.
+$('#editEventForm').on('submit', function(event) {
+    event.preventDefault();
+    $.ajax({
+        url: 'controller/ajax/ajax.updateEvent.php',
+        method: 'POST',
+        data: $('#editEventForm').serialize(),
+        success: function(response) {
+            $('#editEventModal').modal('hide');
+            eventCards();
+        }
+    });
+});
 
-            $('#editEventModal .btn-primary').off('click').on('click', function() {
-                // Maneja la acción de guardar los cambios cuando se hace clic en el botón de guardar.
+    // Handle editing form submission
+    $('#editEventForm').on('submit', function(event) {
+        handleFormSubmission(event, table, 'controller/ajax/ajax.updateEvent.php', '#editEventForm', '#');
+    });
 
-                const editedEvent = {
-                    idEvent: idEvent,
-                    name: $('#eventName').val(),
-                    location: $('#eventLocation').val(),
-                    description: $('#eventDescription').val()
-                };
-
-                $.ajax({
-                    url: 'controller/ajax/editEvent.php',
-                    type: 'POST',
-                    data: editedEvent,
-                    success: function(response) {
-                        // Si la edición es exitosa, cierra el modal y recarga la lista de eventos.
-
-                        if(response.success) {
-                            $('#editEventModal').modal('hide');
-                            eventCards(); // Recarga la lista de eventos.
-                        } else {
-                            alert('Hubo un problema al editar el evento.');
-                        }
-                    }
-                });
+function options(selectedEventTypeId) {
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        dataType: 'json',
+        type: 'POST',
+        data: {
+            search: 'event_types'
+        },
+        success: function(response) {
+            var options = '<option value="">Seleccione un tipo de evento</option>';
+            response.forEach(function(typeEvent) {
+                options += '<option value="' + typeEvent.idEventType + '">' + typeEvent.name + '</option>';
             });
+            $('#eventTypeId').html(options);
+            $('#editEventTypeId').html(options);
+
+            if (selectedEventTypeId) {
+                $('#editEventTypeId').val(selectedEventTypeId);
+            }
         }
     });
 }
@@ -221,21 +223,15 @@ function deleteEvent(idEvent) {
 
     $('#deleteEventModal .btn-danger').off('click').on('click', function() {
         // Maneja la acción de confirmación cuando se hace clic en el botón de eliminar.
-
         $.ajax({
-            url: 'controller/ajax/ajax.forms.php',
-            type: 'POST',
+            url: 'controller/ajax/ajax.deleteEvent.php',
+            method: 'POST',
             data: { idEvent: idEvent },
             success: function(response) {
-                // Si la eliminación es exitosa, cierra el modal y recarga la lista de eventos.
-
-                if(response.success) {
-                    $('#deleteEventModal').modal('hide');
-                    eventCards(); // Recarga la lista de eventos.
-                } else {
-                    alert('Hubo un problema al borrar el evento.');
-                }
+                $('#deleteEventModal').modal('hide');
+                eventCards(); // Recarga la lista de eventos.
             }
         });
+        
     });
 }

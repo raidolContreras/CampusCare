@@ -145,7 +145,7 @@ class FormsController {
         return false; // Placeholder for actual sending function
     }
 
-    public function ctrGetEvents($idStudent) {
+    public function ctrGetEvents() {
         return FormsModel::mdlGetEvents();
     }
 
@@ -171,5 +171,9 @@ class FormsController {
 
     static public function ctrCheckApplicationEvent($idEvent, $idStudent) {
         return FormsModel::mdlCheckApplicationEvent($idEvent, $idStudent);
+    }
+
+    static public function ctrSearchEvents($idEvent) {
+        return FormsModel::mdlSearchEvents($idEvent);
     }
 }

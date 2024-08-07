@@ -188,10 +188,12 @@ if (isset($_POST['search'])) {
     if ($_POST['search'] == 'event') {
         $event = (isset($_POST['idEvent']))? $_POST['idEvent'] : null;
         $searchEvents = new FormsController();
-        if ($_POST['action'] == 'applyEvent') {
-            $events = $searchEvents->ctrApplyEvent($_POST['idEvent'], $_POST['idStudent']);
-        } elseif ($_POST['action'] == 'checkApplication') {
-            $events = $searchEvents->ctrCheckApplicationEvent($_POST['idEvent'], $_POST['idStudent']);
+        if (isset($_POST['action'])) {
+            if ($_POST['action'] == 'applyEvent') {
+                $events = $searchEvents->ctrApplyEvent($_POST['idEvent'], $_POST['idStudent']);
+            } elseif ($_POST['action'] == 'checkApplication') {
+                $events = $searchEvents->ctrCheckApplicationEvent($_POST['idEvent'], $_POST['idStudent']);
+            } 
         } else {
             $events = $searchEvents->ctrSearchEvents($event);
         }
