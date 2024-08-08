@@ -90,7 +90,11 @@ function initializeDataTable() {
             dataSrc: ''
         },
         columns: [
-            { "data": "idEvent" },
+            { "data": null,
+                render: function (data, type, row, meta) {
+                    return meta.row + 1;
+                }
+            },
             { "data": "name" },
             { "data": "eventName" },
             { "data": null,

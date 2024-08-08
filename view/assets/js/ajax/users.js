@@ -7,7 +7,11 @@ $(document).ready(function() {
             dataSrc: ''
         },
         columns: [
-            { "data": "id" },
+            { "data": null,
+                render: function (data, type, row, meta) {
+                    return meta.row + 1;
+                }
+            },
             { "data": "firstname" },
             { "data": "lastname" },
             { "data": "email" },
@@ -37,8 +41,7 @@ $(document).ready(function() {
             method: 'POST',
             data: $(this).serialize(),
             success: function(response) {
-                alert(response);
-                if (response === 'success') {
+                if (response === '"success"') {
                     $('#registerUserForm')[0].reset();
                     $('#registerUserModal').modal('hide');
                     table.ajax.reload();
@@ -55,8 +58,7 @@ $(document).ready(function() {
             method: 'POST',
             data: $(this).serialize(),
             success: function(response) {
-                alert(response);
-                if (response === 'success') {
+                if (response === '"success"') {
                     $('#editUserForm')[0].reset();
                     $('#editUserModal').modal('hide');
                     table.ajax.reload();
@@ -90,10 +92,8 @@ function deleteUser(id) {
             method: 'POST',
             data: { id: id },
             success: function(response) {
-                alert(response);
-                if (response === 'success') {
+                if (response === '"success"') {
                     table.ajax.reload();
-                    
                 }
             }
         });

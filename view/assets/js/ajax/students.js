@@ -19,7 +19,11 @@ function initializeDataTable() {
             dataType: 'json'
         },
         columns: [
-            { "data": null, render: (data, type, row, meta) => meta.row + 1 },
+            { "data": null,
+                render: function (data, type, row, meta) {
+                    return meta.row + 1;
+                }
+            },
             { "data": "matricula" },
             { "data": null, render: (data) => `${data.firstname} ${data.lastname}` },
             { "data": "email" },

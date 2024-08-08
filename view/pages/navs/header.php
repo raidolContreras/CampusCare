@@ -35,7 +35,7 @@
 			<?php if ($_SESSION["user"]['role'] == 'student'):?>
 				<input type="hidden" id="idStudent" value="<?php echo $_SESSION["user"]['idStudent'] ?>">
 			<?php else: ?>
-				<input type="hidden" id="idUser" value="<?php echo $_SESSION["user"]['idUser'] ?>">
+				<input type="hidden" id="idUser" value="<?php echo $_SESSION["user"]['id'] ?>">
 			<?php endif ?>
 			<li class="nav-item">
 				<a class="nav-link px-3" href="" onclick="logout()">

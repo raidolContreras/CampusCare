@@ -75,7 +75,14 @@ function setActiveClass($pageName, $currentPage) {
                     </a>
 
                 <?php elseif ($_SESSION["user"]['role'] == 'teacher'): ?>
-
+                    <a href="students" class="mt-1 menu-top py-2 <?= setActiveClass('students', $pagina) ?>">
+                        <div class="row">
+                            <div class="col-2">
+                                <i class="fad fa-user-graduate"></i>
+                            </div>
+                            <div class="col-8">Estudiantes</div> 
+                        </div>
+                    </a>
                 <?php else: ?>
 
                 <?php endif ?>

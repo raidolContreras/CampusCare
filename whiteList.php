@@ -29,7 +29,7 @@ function includeAuthPages($pagina) {
     if ($_SESSION["user"]['role'] == 'admin') {
         $whitelist = ['inicio', 'users', 'events', 'event_types', 'students', 'register_event', 'courses', 'areas', 'degrees'];
     } elseif ($_SESSION["user"]['role'] == 'teacher') {
-        $whitelist = ['inicio'];
+        $whitelist = ['inicio', 'students'];
     } else {
         $whitelist = ['inicio'];
     }
