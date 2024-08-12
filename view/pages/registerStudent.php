@@ -184,35 +184,7 @@
     </div>
 
     <div class="step d-none" id="step-2">
-        <h4>Paso 2: Dirección</h4>
-        <div class="form-row">
-            <div class="col-md-6 form-group">
-                <label for="calle" class="form-label">Calle</label>
-                <input type="text" class="form-control" id="calle" name="calle" placeholder="Ingresa tu calle" required>
-            </div>
-            <div class="col-md-3 form-group">
-                <label for="numeroInterior" class="form-label">Número Interior</label>
-                <input type="text" class="form-control" id="numeroInterior" name="numeroInterior" placeholder="Ingresa tu número interior" required>
-            </div>
-            <div class="col-md-3 form-group">
-                <label for="numeroExterior" class="form-label">Número Exterior</label>
-                <input type="text" class="form-control" id="numeroExterior" name="numeroExterior" placeholder="Ingresa tu número exterior">
-            </div>
-            <div class="col-md-6 form-group">
-                <label for="colonia" class="form-label">Fraccionamiento/Colonia</label>
-                <input type="text" class="form-control" id="colonia" name="colonia" placeholder="Ingresa tu colonia" required>
-            </div>
-            <div class="col-md-6 form-group">
-                <label for="codigoPostal" class="form-label">Código Postal</label>
-                <input type="text" class="form-control" id="codigoPostal" name="codigoPostal" placeholder="Ingresa tu código postal" required>
-            </div>
-        </div>
-        <button type="button" class="btn btn-secondary prev-step">Anterior</button>
-        <button type="button" class="btn btn-primary next-step">Siguiente</button>
-    </div>
-
-    <div class="step d-none" id="step-3">
-        <h4>Paso 3: Datos Académicos y Contacto</h4>
+        <h4>Paso 2: Datos Académicos y Contacto</h4>
         <div class="form-row">
             <div class="col-md-6 form-group">
                 <label for="licenciatura" class="form-label">Licenciatura</label>
@@ -251,6 +223,34 @@
             <div class="col-md-6 form-group">
                 <label for="parentesco" class="form-label">Parentesco</label>
                 <input type="text" class="form-control" id="parentesco" name="parentesco" placeholder="Ingresa tu parentesco" required>
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary prev-step">Anterior</button>
+        <button type="button" class="btn btn-primary next-step">Siguiente</button>
+    </div>
+
+    <div class="step d-none" id="step-3">
+        <h4>Paso 3: Dirección</h4>
+        <div class="form-row">
+            <div class="col-md-6 form-group">
+                <label for="calle" class="form-label">Calle</label>
+                <input type="text" class="form-control" id="calle" name="calle" placeholder="Ingresa tu calle" required>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="numeroInterior" class="form-label">Número Interior</label>
+                <input type="text" class="form-control" id="numeroInterior" name="numeroInterior" placeholder="Ingresa tu número interior" required>
+            </div>
+            <div class="col-md-3 form-group">
+                <label for="numeroExterior" class="form-label">Número Exterior</label>
+                <input type="text" class="form-control" id="numeroExterior" name="numeroExterior" placeholder="Ingresa tu número exterior">
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="colonia" class="form-label">Fraccionamiento/Colonia</label>
+                <input type="text" class="form-control" id="colonia" name="colonia" placeholder="Ingresa tu colonia" required>
+            </div>
+            <div class="col-md-6 form-group">
+                <label for="codigoPostal" class="form-label">Código Postal</label>
+                <input type="text" class="form-control" id="codigoPostal" name="codigoPostal" placeholder="Ingresa tu código postal" required>
             </div>
         </div>
         <button type="button" class="btn btn-secondary prev-step">Anterior</button>

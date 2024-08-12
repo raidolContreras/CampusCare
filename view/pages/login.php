@@ -1,3 +1,7 @@
+<?php
+    $mail = (isset($_GET['mail'])) ? $_GET['mail'] : '';
+    $password = (isset($_GET['password'])) ? $_GET['password'] : '';
+?>
 <style>
     .card {
         border-radius: 20px;
@@ -44,10 +48,10 @@
                 <div class="card-body">
                     <form class="my-4" id="loginForm">
                         <div class="form-group ">
-                            <input type="email" class="form-control mb-3" name="email" aria-describedby="emailHelp" placeholder="Correo electrónico" aria-label="Correo electrónico">
+                            <input type="email" class="form-control mb-3" name="email" aria-describedby="emailHelp" placeholder="Correo electrónico" aria-label="Correo electrónico" value="<?php echo $mail ?>">
                         </div>
                         <div class="form-group">
-                            <input type="password" class="form-control" name="password" placeholder="Contraseña" aria-label="Contraseña">
+                            <input type="password" class="form-control" name="password" placeholder="Contraseña" aria-label="Contraseña" value="<?php echo $password ?>">
                         </div>
                         <button type="submit" class="btn btn-primary w-100">Ingresar</button>
                     </form>

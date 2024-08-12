@@ -41,11 +41,9 @@ $(document).ready(function() {
             method: 'POST',
             data: $(this).serialize(),
             success: function(response) {
-                if (response === '"success"') {
                     $('#registerUserForm')[0].reset();
                     $('#registerUserModal').modal('hide');
                     table.ajax.reload();
-                }
             }
         });
     });
@@ -58,11 +56,9 @@ $(document).ready(function() {
             method: 'POST',
             data: $(this).serialize(),
             success: function(response) {
-                if (response === '"success"') {
                     $('#editUserForm')[0].reset();
                     $('#editUserModal').modal('hide');
                     table.ajax.reload();
-                }
             }
         });
     });
@@ -92,9 +88,7 @@ function deleteUser(id) {
             method: 'POST',
             data: { id: id },
             success: function(response) {
-                if (response === '"success"') {
-                    table.ajax.reload();
-                }
+                $('#usersTable').DataTable().ajax.reload();
             }
         });
     }

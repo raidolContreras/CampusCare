@@ -108,9 +108,13 @@ class FormsController {
 
             $response = FormsModel::mdlAddPasswordStudent($cryptPass, $student);
 
-            // // If the update is successful, send the password to the student by email
-            // if ($updateResponse == 'success') {
-            // }
+            // If the update is successful, send the password to the student by email
+            if ($response == 'success') {
+                $searchStudent = FormsModel::mdlSearchStudents($student);
+                if ($searchStudent) {
+                    $this->sendPasswordToStudent($searchStudent["email"], $password);
+                }
+            }
         }
         return $password;
     }
@@ -134,16 +138,123 @@ class FormsController {
     }
 
     private function sendPasswordToStudent($email, $password) {
-        // Send the password to the student by email
-        // Example:
-        // $to = $email;
-        // $subject = 'Your Campus Care Password';
-        // $message = 'Your password is: '. $password;
-        // $headers = 'From: Campus Care <noreply@campuscare.com>';
-        // mail($to, $subject, $message, $headers);
-        // return true;
-        return false; // Placeholder for actual sending function
-    }
+        $subject = 'Servicio social UNIMO - Nueva contraseña';
+    
+        $message = '
+        <html>
+        <head>
+            <title>Servicio social UNIMO - Nueva contraseña</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #f4f4f4;
+                    margin: 0;
+                    padding: 0;
+                }
+                .email-container {
+                    width: 100%;
+                    background-color: #ffffff;
+                    padding: 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    max-width: 600px;
+                    margin: 20px auto;
+                    overflow: hidden;
+                }
+                .header {
+                    background-color: #01643D;
+                    padding: 20px;
+                    border-radius: 10px 10px 0 0;
+                    color: white;
+                    text-align: center;
+                }
+                .header img {
+                    max-width: 200px;
+                    margin-bottom: 10px;
+                }
+                .header h1 {
+                    margin: 0;
+                    font-size: 22px;
+                    line-height: 1.4;
+                }
+                .content {
+                    padding: 20px;
+                    text-align: left;
+                }
+                .content p {
+                    font-size: 16px;
+                    color: #333333;
+                    line-height: 1.5;
+                    margin-bottom: 20px;
+                }
+                .content .info-box {
+                    background-color: #e7f5ec;
+                    color: #01643D;
+                    padding: 10px;
+                    border-radius: 5px;
+                    font-weight: bold;
+                    text-align: center;
+                    margin-bottom: 20px;
+                    text-decoration: none;
+                }
+                .content a.button {
+                    display: inline-block;
+                    background-color: #01643D;
+                    color: #ffffff;
+                    padding: 12px 20px;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    text-align: center;
+                    margin-top: 20px;
+                }
+                .footer {
+                    text-align: center;
+                    padding: 20px;
+                    font-size: 12px;
+                    color: #999999;
+                    background-color: #f4f4f4;
+                    border-radius: 0 0 10px 10px;
+                }
+                .footer a {
+                    color: #01643D;
+                    text-decoration: none;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="email-container">
+                <div class="header">
+                    <img src="https://campuscare.devosco.io/view/assets/images/logo.png" alt="UNIMO Logo">
+                    <h1>Bienvenido al servicio social de UNIMO</h1>
+                </div>
+                <div class="content">
+                    <p>Hola,</p>
+                    <p>¡Bienvenido al servicio social de UNIMO! Estamos emocionados de que formes parte de nuestro programa.</p>
+                    <p>Tu email registrado es:</p>
+                    <p class="info-box">' . $email . '</p>
+                    <p>Tu contraseña es:</p>
+                    <p class="info-box">' . $password . '</p>
+                    <p>Para iniciar sesión en nuestra plataforma, haz clic en el botón de abajo o visita nuestro sitio web.</p>
+                    <p style="text-align: center;"><a href="https://campuscare.devosco.io/login?mail='.$email.'&password='.$password.'" target="_blank" class="button">Iniciar sesión</a></p>
+                </div>
+                <div class="footer">
+                    <p>Si tienes alguna pregunta, no dudes en <a href="mailto:olopez@unimontrer.edu.mx">contactarnos</a>.</p>
+                    <p>&copy; ' . date("Y") . ' CampusCare. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </body>
+        </html>';
+    
+        $headers = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
+        $headers .= 'From: Servicio social UNIMO <olopez@unimontrer.edu.mx>' . "\r\n" .
+                    'Reply-To: Servicio social UNIMO <olopez@unimontrer.edu.mx>' . "\r\n" .
+                    'X-Mailer: PHP/' . phpversion();
+    
+        return mail($email, $subject, $message, $headers);
+    }    
 
     public function ctrGetEvents() {
         return FormsModel::mdlGetEvents();
