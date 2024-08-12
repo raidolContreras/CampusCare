@@ -176,4 +176,20 @@ class FormsController {
     static public function ctrSearchEvents($idEvent) {
         return FormsModel::mdlSearchEvents($idEvent);
     }
+
+    static public function ctrStudentEvents($idEvent) {
+        return FormsModel::mdlStudentEvents($idEvent);
+    }
+
+    static public function ctrEventsCandidates($idEvent) {
+        return FormsModel::mdlEventsCandidates($idEvent);
+    }
+
+    static public function ctrUsersToAreas($idArea) {
+        return FormsModel::mdlUsersToAreas($idArea);
+    }
+
+    static public function ctrUpdateUsersToAreas($idArea, $idUser) {
+        return FormsModel::mdlUpdateUsersToAreas($idArea, $idUser);
+    }
 }

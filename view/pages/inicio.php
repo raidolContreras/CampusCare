@@ -1,3 +1,14 @@
+<style>
+    .card-body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-body .btn-group {
+        margin-top: auto;
+    }
+
+</style>
 
 <div>
     <div>

@@ -24,7 +24,7 @@ function formatDateTime(dateTimeString) {
     return `${day} de ${month} del ${year}, ${hours}:${minutesFormatted} ${ampm}`; // Devuelve la fecha y hora formateada.
 }
 
-function eventCards() {
+async function eventCards() {
     // Función para cargar y mostrar las tarjetas de eventos.
 
     const role = $('#role').val(); // Obtiene el rol del usuario (admin, student, etc.).
@@ -35,54 +35,54 @@ function eventCards() {
         url: 'controller/ajax/eventCards.php',
         type: 'POST',
         dataType: 'json',
-        success: function(response) {
+        success: async function(response) {
             let eventsHtml = ''; // Variable para almacenar el HTML generado para las tarjetas de eventos.
-            const promises = []; // Arreglo para almacenar las promesas si el rol es 'student'.
 
-            response.forEach(function(event) {
-                // Itera sobre cada evento en la respuesta.
+            for (const event of response) {
+                let actionHtml = '';
 
                 if (role === 'student') {
                     // Si el rol es 'student', verifica si el estudiante ya está postulado al evento.
+                    const isApplied = await checkApplicationStatus(idStudent, event.idEvent);
 
-                    const promise = checkApplicationStatus(idStudent, event.idEvent).then(isApplied => {
-                        // Llama a la función checkApplicationStatus y maneja la respuesta.
-
-                        const actionHtml = isApplied 
-                            ? `<button class="btn btn-primary mt-auto" disabled>Ya postulado</button>` 
-                            : `<button onclick="applyEvent(${event.idEvent})" class="btn btn-primary mt-auto">Postularme</button>`;
-                        
-                        eventsHtml += buildEventCard(event, actionHtml); // Construye el HTML de la tarjeta con la acción correspondiente.
-                    });
-
-                    promises.push(promise); // Agrega la promesa al arreglo de promesas.
+                    actionHtml = isApplied 
+                        ? `<button class="btn btn-primary mt-auto" disabled>Ya postulado</button>` 
+                        : `<button onclick="applyEvent(${event.idEvent})" class="btn btn-primary mt-auto">Postularme</button>`;
+                    
+                } else if (role === 'admin') {
+                    // Si el rol es 'admin', agrega botones para editar y borrar el evento.
+                    actionHtml = `
+                        <div class="btn-group" role="group" aria-label="Acciones">
+                            <button onclick="editEvent(${event.idEvent})" class="btn btn-primary mt-auto">Editar evento</button> 
+                            <button onclick="deleteEvent(${event.idEvent})" class="btn btn-danger mt-auto">Borrar evento</button>
+                        </div>`;
                 } else {
-                    // Si el rol no es 'student', determina las acciones disponibles según el rol.
-
-                    let actionHtml = '';
-                    if (role === 'admin') {
-                        // Si el rol es 'admin', agrega botones para editar y borrar el evento.
-                        actionHtml = `
-                            <div class="btn-group" role="group" aria-label="Acciones">
-                                <button onclick="editEvent(${event.idEvent})" class="btn btn-primary mt-auto">Editar evento</button> 
-                                <button onclick="deleteEvent(${event.idEvent})" class="btn btn-danger mt-auto">Borrar evento</button>
-                            </div>`;
-                    } else {
-                        // Si el rol es otro (por ejemplo, un usuario regular), agrega un botón para ver el evento.
-                        actionHtml = `<button onclick="lookEvent(${event.idEvent})" class="btn btn-primary mt-auto">Ver evento</button>`;
-                    }
-                    eventsHtml += buildEventCard(event, actionHtml); // Construye el HTML de la tarjeta con la acción correspondiente.
+                    // Si el rol es otro (por ejemplo, un usuario regular), agrega un botón para ver el evento.
+                    actionHtml = `
+                        <div class="btn-group" role="group" aria-label="Acciones">
+                            <button onclick="lookEvent(${event.idEvent})" class="btn btn-primary mt-auto">Ver evento</button>
+                            <button onclick="lookCandidates(${event.idEvent})" class="btn btn-info mt-auto">Ver candidatos</button>
+                        </div>`;
                 }
-            });
 
-            if (role === 'student') {
-                // Si el rol es 'student', espera a que todas las promesas se resuelvan antes de actualizar el HTML.
-                Promise.all(promises).then(() => updateEventsHtml(eventsHtml));
-            } else {
-                // Si el rol no es 'student', actualiza el HTML directamente.
-                updateEventsHtml(eventsHtml);
+                // Construye la tarjeta de evento y espera a que se resuelva.
+                const html = await buildEventCard(event, actionHtml);
+                eventsHtml += html; // Acumula el HTML generado.
             }
+
+            // Una vez que se han generado todas las tarjetas, actualiza el HTML.
+            updateEventsHtml(eventsHtml);
         }
+    });
+}
+
+
+function getStudentsEvent(idEvent) {
+    return $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        method: 'POST',
+        data: { idEvent: idEvent, search: 'event', action: 'studentEvents'},
+        dataType: 'json'
     });
 }
 
@@ -102,12 +102,19 @@ function checkApplicationStatus(idStudent, idEvent) {
     });
 }
 
-function buildEventCard(event, actionHtml) {
+async function buildEventCard(event, actionHtml) {
     // Función para construir el HTML de una tarjeta de evento.
-
     const formattedDateTime = formatDateTime(`${event.date} ${event.start_time}`); // Formatea la fecha y hora del evento.
-
+    let counter = 0;
+    // Espera a que se resuelva la promesa para obtener el conteo de estudiantes.
+    const count = await getStudentsEvent(event.idEvent);
+    
+    counter = (count.students != null) ? count.students : 0;
+    vacancies_available = event.vacancies_available - counter;
     // Devuelve el HTML de la tarjeta de evento con los detalles y la acción correspondiente.
+    let role = $('#role').val();
+    let idArea = $('#idArea').val();
+    if (idArea == event.idArea && role == 'teacher') {
     return `
         <div class="col-lg-4 col-sm-6 col-12 mb-4">
             <div class="card shadow-sm h-100 border-0 rounded-lg">
@@ -117,11 +124,29 @@ function buildEventCard(event, actionHtml) {
                     <p class="card-text mb-3 text-secondary">${event.description}</p>
                     <hr class="my-3">
                     <p class="card-text mb-2"><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> ${formattedDateTime}</p>
-                    <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes:</strong> ${event.vacancies_available}</p>
+                    <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes disponibles:</strong> ${vacancies_available}</p>
                     ${actionHtml}
                 </div>
             </div>
         </div>`;
+    } else if (role != 'teacher') {
+        return `
+        <div class="col-lg-4 col-sm-6 col-12 mb-4">
+            <div class="card shadow-sm h-100 border-0 rounded-lg">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title text-primary font-weight-bold mb-3">${event.name}</h5>
+                    <p class="card-text text-muted"><i class="fas fa-map-marker-alt"></i> <strong>Lugar:</strong> ${event.location}</p>
+                    <p class="card-text mb-3 text-secondary">${event.description}</p>
+                    <hr class="my-3">
+                    <p class="card-text mb-2"><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> ${formattedDateTime}</p>
+                    <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes disponibles:</strong> ${vacancies_available}</p>
+                    ${actionHtml}
+                </div>
+            </div>
+        </div>`;
+    } else {
+        return '';
+    }
 }
 
 function updateEventsHtml(htmlContent) {
@@ -174,6 +199,57 @@ function editEvent(idEvent) {
         }
     });
 }
+
+function lookEvent(event) {
+    
+}
+
+function lookCandidates(event) {
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        method: 'POST',
+        data: { idEvent: event, search: 'event', action: 'lookCandidates' },
+        dataType: 'json',
+        success: function(students) {
+            // Limpiar la tabla antes de llenarla
+            $('#candidatesTable tbody').empty();
+            
+            // Iterar sobre los datos recibidos y agregar filas a la tabla
+            $.each(students, function(index, student) {
+                var row = '<tr>' +
+                          '<td>' + (index + 1) + '</td>' +
+                          '<td>' + student.firstname + '</td>' +
+                          '<td>' + student.lastname + '</td>' +
+                          '<td>' + student.email + '</td>' +
+                          '<td>' + student.phone + '</td>' +
+                          `<td>
+                            <div class="btn-group">
+                                <button class="btn btn-primary" onclick="accept(1,${event}, ${student.idStudent})">Aceptar</button>
+                                <button class="btn btn-danger" onclick="accept(0,${event}, ${student.idStudent})">Rechazar</button>
+                            </div>
+                          </td>` +
+                          '</tr>';
+                $('#candidatesTable tbody').append(row);
+            });
+
+            // Mostrar el modal
+            $('#candidatesModal').modal('show');
+        }
+    });
+}
+
+function accept(status, event, student) {
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        method: 'POST',
+        data: { idEvent: event, idStudent: student, status: status, action: 'acceptCandidate' },
+        success: function(response) {
+            $('#candidatesModal').modal('hide');
+            lookCandidates(event);
+        }
+    });
+}
+
 
 $('#editEventForm').on('submit', function(event) {
     event.preventDefault();

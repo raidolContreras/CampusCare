@@ -36,6 +36,7 @@
 				<input type="hidden" id="idStudent" value="<?php echo $_SESSION["user"]['idStudent'] ?>">
 			<?php else: ?>
 				<input type="hidden" id="idUser" value="<?php echo $_SESSION["user"]['id'] ?>">
+				<input type="hidden" id="idArea" value="<?php echo $_SESSION["user"]['idArea'] ?>">
 			<?php endif ?>
 			<li class="nav-item">
 				<a class="nav-link px-3" href="" onclick="logout()">

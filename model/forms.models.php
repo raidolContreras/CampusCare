@@ -72,7 +72,7 @@ class FormsModel {
     }
 
     static public function mdlShowUser($table, $item, $value) {
-        $stmt = Conexion::conectar()->prepare("SELECT * FROM $table WHERE $item = :$item");
+        $stmt = Conexion::conectar()->prepare("SELECT * FROM $table u LEFT JOIN areas_users au ON au.idUser = u.id WHERE $item = :$item");
         $stmt->bindParam(":" . $item, $value, PDO::PARAM_STR);
         $stmt->execute();
         $response = $stmt->fetch();
@@ -692,5 +692,80 @@ class FormsModel {
         $stmt = null;
         return $response;
     }
+
+    static public function mdlStudentEvents($idEvent) {
+        $sql = "SELECT SUM(1) AS students FROM students_events WHERE idEvent = :idEvent";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetch();
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlEventsCandidates($idEvent) {
+        $sql = "SELECT s.*, e.* FROM students_events se LEFT JOIN student s ON s.idStudent = se.idStudent LEFT JOIN events e ON e.idEvent = se.idEvent WHERE se.idEvent = :idEvent";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetchAll();
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlUsersToAreas($idArea) {
+        $sql = "SELECT 
+                    u.id AS idUser, 
+                    u.firstname, 
+                    u.lastname, 
+                    CASE 
+                        WHEN (SELECT COUNT(*) FROM areas_users au WHERE au.idUser = u.id AND au.idArea = :idArea) > 0 THEN 1 
+                        ELSE 0 
+                    END AS pertenece
+                FROM 
+                    users u
+                LEFT JOIN 
+                    areas_users au ON u.id = au.idUser AND au.idArea = :idArea
+                GROUP BY 
+                    u.id;
+                ";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idArea", $idArea, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetchAll();
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlUpdateUsersToAreas($idArea, $idUser) {
+    // Primero, elimina cualquier relación existente para este idUser
+    $sqlDelete = "DELETE FROM areas_users WHERE idUser = :idUser";
+    $stmtDelete = Conexion::conectar()->prepare($sqlDelete);
+    $stmtDelete->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+    $stmtDelete->execute();
+
+    // Luego, inserta la nueva relación
+    $sqlInsert = "INSERT INTO areas_users (idUser, idArea) VALUES (:idUser, :idArea) ON DUPLICATE KEY UPDATE idUser = :idUser, idArea = :idArea";
+    $stmtInsert = Conexion::conectar()->prepare($sqlInsert);
+    $stmtInsert->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+    $stmtInsert->bindParam(":idArea", $idArea, PDO::PARAM_INT);
+
+    if($stmtInsert->execute()) {
+        $response = "success";
+    } else {
+        $response = "error";
+    }
+
+    $stmtInsert->closeCursor();
+    $stmtInsert = null;
+    return $response;
+}
+
 
 }

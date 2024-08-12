@@ -3,6 +3,23 @@ require_once "../../model/forms.models.php";
 require_once "../forms.controller.php";
 
 if (isset($_POST['search'])) {
+
+    if ($_POST['search'] == 'users') {
+        $user = (isset($_POST['user'])) ? $_POST['user'] : null;
+        $searchUsers = new FormsController();
+        if (isset($_POST['action'])) {
+            if ($_POST['action'] == 'usersToAreas'){
+                $users = $searchUsers->ctrUsersToAreas($_POST['idArea']);
+            }
+            if ($_POST['action'] == 'updateUsersToArea'){
+                $users = $searchUsers->ctrUpdateUsersToAreas($_POST['idArea'], $_POST['idUser']);
+            }
+        } else {
+            // $users = $searchUsers->ctrSearchUsers($user);
+        }
+        echo json_encode($users);
+    }
+
     if ($_POST['search'] == 'areas') {
         $area = (isset($_POST['area'])) ? $_POST['area'] : null;
 
@@ -193,7 +210,11 @@ if (isset($_POST['search'])) {
                 $events = $searchEvents->ctrApplyEvent($_POST['idEvent'], $_POST['idStudent']);
             } elseif ($_POST['action'] == 'checkApplication') {
                 $events = $searchEvents->ctrCheckApplicationEvent($_POST['idEvent'], $_POST['idStudent']);
-            } 
+            } elseif ($_POST['action'] == 'studentEvents'){
+                $events = $searchEvents->ctrStudentEvents($event);
+            } elseif ($_POST['action'] == 'lookCandidates'){
+                $events = $searchEvents->ctrEventsCandidates($event);
+            }
         } else {
             $events = $searchEvents->ctrSearchEvents($event);
         }
