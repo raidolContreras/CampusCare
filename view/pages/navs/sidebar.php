@@ -4,7 +4,7 @@ $pagina = filter_input(INPUT_GET, 'pagina', FILTER_SANITIZE_STRING);
 $pagina = $pagina ? $pagina : 'inicio';
 
 function setActiveClass($pageName, $currentPage) {
-    return $pageName === $currentPage ? 'active' : '';
+    return $pageName === $currentPage ? 'active disabled' : '';
 }
 ?>
 <div class="row">

@@ -15995,3 +15995,8 @@ body {
   font-size: 1.5rem; /* Ajusta el tamaño de la "X" */
   line-height: 1;
 }
+
+a.disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+}
