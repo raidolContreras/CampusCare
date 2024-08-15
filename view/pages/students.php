@@ -12,7 +12,9 @@
                     <th>Teléfono</th>
                     <th>Licenciatura</th>
                     <th>Pariente</th>
-                    <th>Acciones</th>
+                    <?php if ($_SESSION["user"]['role'] == 'admin'):?>
+                        <th>Acciones</th>
+                    <?php endif ?>
                 </tr>
             </thead>
         </table>

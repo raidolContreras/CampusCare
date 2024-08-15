@@ -5,7 +5,7 @@
         <div class="modal-content">
             <div class="modal-header bg-success">
                 <h5 class="modal-title" id="registerEventTypeModalLabel">Tipos de eventos</h5>
-                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -88,13 +88,12 @@
 </div>
 
 <!-- Modal para registrar evento nuevo -->
-<!-- Modal para registrar evento nuevo -->
 <div class="modal fade" id="registerEventModal" tabindex="-1" aria-labelledby="registerEventModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-success">
                 <h5 class="modal-title" id="registerEventModalLabel">Registrar Evento Nuevo</h5>
-                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="registerEventForm">
@@ -107,6 +106,12 @@
                         <div class="col-md-6 mb-3">
                             <label for="eventName" class="form-label">Nombre del Evento</label>
                             <input type="text" class="form-control" id="eventName" name="eventName" required>
+                        </div>
+                        <div class="col-12 mb-3">
+                            <label for="eventUser" class="form-label">Encargado del evento</label>
+                            <select name="eventUser" id="eventUser" class="form-select">
+                                
+                            </select>
                         </div>
                     </div>
                     <div class="row">
@@ -158,7 +163,7 @@
         <div class="modal-content">
             <div class="modal-header bg-success">
                 <h5 class="modal-title" id="editEventModalLabel">Editar Evento</h5>
-                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close text-white" data-bs-dismiss="modal" aria-label="Close">&times;</button>
             </div>
             <div class="modal-body">
                 <form id="editEventForm">

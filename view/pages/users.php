@@ -47,7 +47,7 @@
                     <div class="mb-3">
                         <label for="role" class="form-label">Rol</label>
                         <select class="form-control" id="role" name="role" required>
-                            <option value="teacher">Maestro</option>
+                            <option value="teacher">Director de area</option>
                             <option value="admin">Administrador</option>
                         </select>
                     </div>
@@ -84,7 +84,7 @@
                     <div class="mb-3">
                         <label for="editRole" class="form-label">Rol</label>
                         <select class="form-control" id="editRole" name="role" required>
-                            <option value="teacher">Maestro</option>
+                            <option value="teacher">Director de area</option>
                             <option value="admin">Administrador</option>
                         </select>
                     </div>

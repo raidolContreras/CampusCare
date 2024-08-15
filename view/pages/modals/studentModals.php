@@ -468,3 +468,104 @@
         </div>
     </div>
 </div>
+
+<!-- Modal -->
+<div class="modal fade" id="studentModal" tabindex="-1" aria-labelledby="studentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header text-white">
+                <h5 class="modal-title" id="studentModalLabel">Detalles del Alumno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Matrícula</h6>
+                                    <p class="card-text" id="studentMatricula"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Nombre Completo</h6>
+                                    <p class="card-text" id="studentFullName"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Email</h6>
+                                    <p class="card-text" id="studentEmail"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Teléfono</h6>
+                                    <p class="card-text" id="studentPhone"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Dirección</h6>
+                                    <p class="card-text" id="studentAddress"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Grado Académico</h6>
+                                    <p class="card-text" id="studentDegree"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Fecha de Nacimiento</h6>
+                                    <p class="card-text" id="studentBirthday"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Género</h6>
+                                    <p class="card-text" id="studentGender"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-subtitle mb-2 text-muted">Contacto de Emergencia</h6>
+                                    <p class="card-text" id="studentParent"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

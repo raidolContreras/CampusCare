@@ -116,12 +116,12 @@ function initializeDataTable() {
                 "data": null,
                 "render": function (data) {
                     return `
-                        <div class="btn-group" role="group" aria-label="Acciones">
+                        <div class="btn-group btn-block" role="group" aria-label="Acciones">
                             <button type="button" class="btn btn-primary" onclick="editArea(${data.idArea})"><i class="fad fa-edit"></i></button>
                             <button type="button" class="btn btn-danger" onclick="deleteArea(${data.idArea})"><i class="fad fa-trash-alt"></i></button>
                         </div>
-                        <button type="button" class="btn btn-info" onclick="selectUser(${data.idArea})"><i class="fad fa-user-tag"></i></button>
                         `;
+                        //<button type="button" class="btn btn-info" onclick="selectUser(${data.idArea})"><i class="fad fa-user-tag"></i></button>
                 }
             }
         ],
@@ -140,7 +140,7 @@ function selectUser(idArea) {
         success: function(data) {
             var options = '<option value="">Seleccione un usuario</option>';
             data.forEach(function(user) {
-                options += '<option value="' + user.idUser + '"' + (user.pertenece == 1 ? ' selected' : '') + '>' 
+                options += '<option value="' + user.idUser + '"' + (user.pertenece == 1 ? ' selected' : '') + '>'
                         + user.firstname + ' ' + user.lastname + '</option>';
             });
             $('#areaSelected').val(idArea);

@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 $(document).ready(function() {
+    getUsers();
     // Initialize DataTable
     var table = initializeDataTable();
     var tableTypesEvents = initializeDataTableTypesEvents();
@@ -355,3 +356,19 @@ $('#editEventTypeId').on('change', function() {
         }
     });
 });
+
+function getUsers() {
+    $.ajax({
+        type: 'POST',
+        url: 'controller/ajax/ajax.forms.php',
+        data: { search: 'users' },
+        dataType: 'json',
+        success: function(response) {
+            var select = $('#eventUser');
+            select.append( '<option vlaue="">Selecciona al encargado</option>' );
+            for (var i = 0; i < response.length; i++) {
+                select.append(`<option value="${response[i].id}">${response[i].firstname} ${response[i].lastname}</option>`);
+            }
+        }
+    });
+}

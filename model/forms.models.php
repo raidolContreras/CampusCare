@@ -105,7 +105,7 @@ class FormsModel {
     }
 
     static public function mdlGetEvents() {
-        $stmt = Conexion::conectar()->prepare("SELECT * FROM events e LEFT JOIN event_types et ON et.idEventType = e.eventTypeId ");
+        $stmt = Conexion::conectar()->prepare("SELECT e.*, et.* FROM events e LEFT JOIN event_types et ON et.idEventType = e.eventTypeId LEFT JOIN courses c ON c.idCourse = e.idCourse");
         $stmt->execute();
         $response = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $stmt->closeCursor();
@@ -134,16 +134,17 @@ class FormsModel {
         return $response;
     }
 
-    static public function mdlAddEvent($eventTypeId, $eventName, $date, $location, $start_time, $end_time, $points, $vacancies_available, $description) {
+    static public function mdlAddEvent($eventTypeId, $eventName, $idUser, $date, $location, $start_time, $end_time, $points, $vacancies_available, $description) {
         $stmt = Conexion::conectar()->prepare("
             INSERT INTO events 
-            (eventTypeId, eventName, date, location, start_time, end_time, points, vacancies_available, description, createdAt, idCourse) 
+            (eventTypeId, eventName, idUser, date, location, start_time, end_time, points, vacancies_available, description, createdAt, idCourse) 
             VALUES 
-            (:eventTypeId, :eventName, :date, :location, :start_time, :end_time, :points, :vacancies_available, :description, NOW(), (SELECT idCourse FROM courses WHERE active = 1))
+            (:eventTypeId, :eventName, :idUser, :date, :location, :start_time, :end_time, :points, :vacancies_available, :description, NOW(), (SELECT idCourse FROM courses WHERE active = 1))
         ");
     
         $stmt->bindParam(":eventTypeId", $eventTypeId, PDO::PARAM_INT);
         $stmt->bindParam(":eventName", $eventName, PDO::PARAM_STR);
+        $stmt->bindParam(":idUser", $idUser, PDO::PARAM_INT);
         $stmt->bindParam(":date", $date, PDO::PARAM_STR);
         $stmt->bindParam(":location", $location, PDO::PARAM_STR);
         $stmt->bindParam(":start_time", $start_time, PDO::PARAM_STR);
@@ -543,12 +544,12 @@ class FormsModel {
     
     static public function mdlSearchStudents($idStudent) {
         if ($idStudent == null) {
-            $sql = "SELECT * FROM student s LEFT JOIN courses c ON c.idCourse = s.idCourse LEFT JOIN degrees d ON d.idDegree = s.idDegree WHERE c.active = 1";
+            $sql = "SELECT * FROM student s LEFT JOIN courses c ON c.idCourse = s.idCourse LEFT JOIN degrees d ON d.idDegree = s.idDegree";
             $stmt = Conexion::conectar()->prepare($sql);
             $stmt->execute();
             $response = $stmt->fetchAll();
         } else {
-            $sql = "SELECT * FROM student s LEFT JOIN courses c ON c.idCourse = s.idCourse LEFT JOIN degrees d ON d.idDegree = s.idDegree WHERE s.idStudent = :idStudent AND c.active = 1";
+            $sql = "SELECT * FROM student s LEFT JOIN courses c ON c.idCourse = s.idCourse LEFT JOIN degrees d ON d.idDegree = s.idDegree WHERE s.idStudent = :idStudent";
             $stmt = Conexion::conectar()->prepare($sql);
             $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_STR);
             $stmt->execute();
@@ -706,7 +707,7 @@ class FormsModel {
     }
 
     static public function mdlEventsCandidates($idEvent) {
-        $sql = "SELECT s.*, e.* FROM students_events se LEFT JOIN student s ON s.idStudent = se.idStudent LEFT JOIN events e ON e.idEvent = se.idEvent WHERE se.idEvent = :idEvent";
+        $sql = "SELECT s.idStudent, s.firstname, s.lastname, s.email, s.phone, e.*, se.* FROM students_events se LEFT JOIN student s ON s.idStudent = se.idStudent LEFT JOIN events e ON e.idEvent = se.idEvent WHERE se.idEvent = :idEvent";
         $stmt = Conexion::conectar()->prepare($sql);
         $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
         $stmt->execute();
@@ -744,28 +745,116 @@ class FormsModel {
     }
 
     static public function mdlUpdateUsersToAreas($idArea, $idUser) {
-    // Primero, elimina cualquier relación existente para este idUser
-    $sqlDelete = "DELETE FROM areas_users WHERE idUser = :idUser";
-    $stmtDelete = Conexion::conectar()->prepare($sqlDelete);
-    $stmtDelete->bindParam(":idUser", $idUser, PDO::PARAM_INT);
-    $stmtDelete->execute();
+        $sqlInsert = "INSERT INTO areas_users (idUser, idArea) VALUES (:idUser, :idArea) ON DUPLICATE KEY UPDATE idArea = :idArea";
+        $stmtInsert = Conexion::conectar()->prepare($sqlInsert);
+        $stmtInsert->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+        $stmtInsert->bindParam(":idArea", $idArea, PDO::PARAM_INT);
 
-    // Luego, inserta la nueva relación
-    $sqlInsert = "INSERT INTO areas_users (idUser, idArea) VALUES (:idUser, :idArea) ON DUPLICATE KEY UPDATE idUser = :idUser, idArea = :idArea";
-    $stmtInsert = Conexion::conectar()->prepare($sqlInsert);
-    $stmtInsert->bindParam(":idUser", $idUser, PDO::PARAM_INT);
-    $stmtInsert->bindParam(":idArea", $idArea, PDO::PARAM_INT);
+        if($stmtInsert->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
 
-    if($stmtInsert->execute()) {
-        $response = "success";
-    } else {
-        $response = "error";
+        $stmtInsert->closeCursor();
+        $stmtInsert = null;
+        return $response;
     }
 
-    $stmtInsert->closeCursor();
-    $stmtInsert = null;
-    return $response;
-}
+    static public function mdlSearchUsers($idUser) {
+        if ($idUser == null) {
+            $sql = "SELECT * FROM users ORDER BY firstname ASC";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->execute();
+            $response = $stmt->fetchAll();
+        } else {
+            $sql = "SELECT * FROM users WHERE id = :idUser";
+            $stmt = Conexion::conectar()->prepare($sql);
+            $stmt->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+            $stmt->execute();
+            $response = $stmt->fetch();
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
 
+    static public function mdlAcceptCandidate($idStudent, $idEvent, $idUser) {
+        $sql = "UPDATE students_events SET status = 1, idUser = :idUser, statusEvent = 1, points = 0 WHERE idStudent = :idStudent AND idEvent = :idEvent";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_INT);
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlDeclineCandidate($idStudent, $idEvent, $idUser) {
+        $sql = "UPDATE students_events SET status = 2, idUser = :idUser, statusEvent = 0, points = 0 WHERE idStudent = :idStudent AND idEvent = :idEvent";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_INT);
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlGetPointsEvent($idEvent) {
+        $sql = "SELECT points FROM events WHERE idEvent = :idEvent";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetch();
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlApproveEvent($idStudent, $idEvent, $idUser, $points) {
+        $sql = "UPDATE students_events 
+                SET 
+                    status = 2, 
+                    idUser = :idUser, 
+                    statusEvent = 1, 
+                    points = :points, 
+                    evaluationDate = DATE_SUB(NOW(), INTERVAL 6 HOUR) 
+                WHERE 
+                    idStudent = :idStudent 
+                    AND idEvent = :idEvent;
+                ";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_INT);
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+        $stmt->bindParam(":points", $points, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
 
 }

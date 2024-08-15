@@ -303,4 +303,25 @@ class FormsController {
     static public function ctrUpdateUsersToAreas($idArea, $idUser) {
         return FormsModel::mdlUpdateUsersToAreas($idArea, $idUser);
     }
+
+    static public function ctrSearchUsers($idUser) {
+        return FormsModel::mdlSearchUsers($idUser);
+    }
+
+    static public function ctrAcceptCandidate($idStudent, $idEvent, $idUser, $status) {
+        if ($status == 1) {
+            return FormsModel::mdlAcceptCandidate($idStudent, $idEvent, $idUser);
+        } else {
+            return FormsModel::mdlDeclineCandidate($idStudent, $idEvent, $idUser);
+        }
+    }
+
+    static public function ctrApproveEvent($idStudent, $idEvent, $idUser, $status) {
+        if ($status == 1) {
+            $points = FormsModel::mdlGetPointsEvent($idEvent);
+            return FormsModel::mdlApproveEvent($idStudent, $idEvent, $idUser, $points['points']);
+        } else {
+            return FormsModel::mdlDeclineEvent($idStudent, $idEvent, $idUser);
+        }
+    }
 }

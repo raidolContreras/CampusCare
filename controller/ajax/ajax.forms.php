@@ -15,7 +15,7 @@ if (isset($_POST['search'])) {
                 $users = $searchUsers->ctrUpdateUsersToAreas($_POST['idArea'], $_POST['idUser']);
             }
         } else {
-            // $users = $searchUsers->ctrSearchUsers($user);
+            $users = $searchUsers->ctrSearchUsers($user);
         }
         echo json_encode($users);
     }
@@ -214,6 +214,10 @@ if (isset($_POST['search'])) {
                 $events = $searchEvents->ctrStudentEvents($event);
             } elseif ($_POST['action'] == 'lookCandidates'){
                 $events = $searchEvents->ctrEventsCandidates($event);
+            } elseif ($_POST['action'] == 'acceptCandidate'){
+                $events = $searchEvents->ctrAcceptCandidate($_POST['idStudent'], $_POST['idEvent'], $_POST['idUser'], $_POST['status']);
+            } elseif ($_POST['action'] == 'approveEvent') {
+                $events = $searchEvents->ctrApproveEvent($_POST['idStudent'], $_POST['idEvent'], $_POST['idUser'], $_POST['status']);
             }
         } else {
             $events = $searchEvents->ctrSearchEvents($event);

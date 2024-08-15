@@ -10,6 +10,61 @@ $(document).ready(function () {
 });
 
 function initializeDataTable() {
+    var role = $('#role').val();
+    var columns = [
+        { "data": null,
+            render: function (data, type, row, meta) {
+                return meta.row + 1;
+            }
+        },
+        {
+            "data": "matricula",
+            render: function(data, type, row) {
+                return `<button type="button" class="btn btn-info btn-block" onclick="showStudentModal(${row.idStudent})">${data}</button>`;
+            }
+        },
+        { "data": null, render: (data) => `${data.firstname} ${data.lastname}` },
+        { "data": "email" },
+        { "data": "phone" },
+        { "data": "nameDegree" },
+        { "data": null, render: (data) => `${data.parent}: ${data.emergenci_phone}` }
+    ];
+
+    // Agregar la columna de acciones solo si el rol es admin
+    if (role == 'admin') {
+        columns.push({
+            "data": null,
+            render: function (data) {
+                let buttons = '';
+                if (data.status === 1) {
+                    if (data.accepted == 0) {
+                        buttons = `
+                        <button type="button" class="btn btn-success" onclick="acceptStudent(${data.idStudent})">
+                            <i class="fad fa-check"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="denegateStudent(${data.idStudent})">
+                            <i class="fas fa-times"></i>
+                        </button>`;
+                    } else if (data.accepted == 1) {
+                        buttons = `
+                        <button type="button" class="btn btn-primary" onclick="showEditModal(${data.idStudent})">
+                            <i class="fad fa-edit"></i>
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="confirmDeleteStudent(${data.idStudent})">
+                            <i class="fad fa-trash-alt"></i>
+                        </button>`;
+                    }
+
+                    return `<div class="btn-group" role="group">${buttons}</div>`;
+                } else {
+                    return `<button type="button" class="btn btn-info" onclick="showCommentsModal('${data.comments}')">
+                                <i class="fad fa-comments"></i>
+                            </button>`;
+                }
+            }
+        });
+    }
+
     $('#studentsTable').DataTable({
         ajax: {
             type: 'POST',
@@ -18,52 +73,36 @@ function initializeDataTable() {
             data: { search: 'student' },
             dataType: 'json'
         },
-        columns: [
-            { "data": null,
-                render: function (data, type, row, meta) {
-                    return meta.row + 1;
-                }
-            },
-            { "data": "matricula" },
-            { "data": null, render: (data) => `${data.firstname} ${data.lastname}` },
-            { "data": "email" },
-            { "data": "phone" },
-            { "data": "nameDegree" },
-            { "data": null, render: (data) => `${data.parent}: ${data.emergenci_phone}` },
-            {
-                "data": null,
-                render: function (data) {
-                    let buttons = '';
-                    if (data.status === 1) {
-                        if (data.accepted == 0) {
-                            buttons = `
-                            <button type="button" class="btn btn-success" onclick="acceptStudent(${data.idStudent})">
-                                <i class="fad fa-check"></i>
-                            </button>
-                            <button type="button" class="btn btn-danger" onclick="denegateStudent(${data.idStudent})">
-                                <i class="fas fa-times"></i>
-                            </button>`;
-                        } else if (data.accepted == 1) {
-                            buttons = `
-                            <button type="button" class="btn btn-primary" onclick="showEditModal(${data.idStudent})">
-                                <i class="fad fa-edit"></i>
-                            </button>
-                            <button type="button" class="btn btn-danger" onclick="confirmDeleteStudent(${data.idStudent})">
-                                <i class="fad fa-trash-alt"></i>
-                            </button>`;
-                        }
-
-                        return `<div class="btn-group" role="group">${buttons}</div>`;
-                    } else {
-                        return `<button type="button" class="btn btn-info" onclick="showCommentsModal('${data.comments}')">
-                                    <i class="fad fa-comments"></i>
-                                </button>`;
-                    }
-                }
-            }
-        ],
+        columns: columns,
         language: {
             url: "https://cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json"
+        }
+    });
+}
+
+function showStudentModal(idStudent) {
+    $.ajax({
+        type: 'POST',
+        url: 'controller/ajax/ajax.forms.php', // Crear este endpoint para obtener los detalles del alumno
+        data: {search: 'student', idStudent: idStudent },
+        dataType: 'json',
+        success: function(data) {
+            // Rellenar los datos del alumno en el modal
+            $('#studentMatricula').text(data.matricula);
+            $('#studentFullName').text(`${data.firstname} ${data.lastname}`);
+            $('#studentEmail').text(data.email);
+            $('#studentPhone').text(data.phone);
+            $('#studentAddress').text(`${data.street} ${data.nInt} ${data.nExt}, ${data.colony}, CP: ${data.cp}`);
+            $('#studentDegree').text(data.nameDegree);
+            $('#studentBirthday').text(`${data.dayBirthday}/${data.monthBirthday}/${data.yearBirthday}`);
+            $('#studentGender').text(data.gender === 1 ? 'Masculino' : 'Femenino');
+            $('#studentParent').text(`${data.parent}: ${data.emergenci_phone}`);
+
+            // Mostrar el modal
+            $('#studentModal').modal('show');
+        },
+        error: function() {
+            alert('Error al obtener los detalles del alumno.');
         }
     });
 }

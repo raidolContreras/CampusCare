@@ -23,7 +23,14 @@
 		<ul class="navbar-nav">
 			<li class="nav-item mt-5">
 				<?php
-					echo $_SESSION["user"]['role'];
+					if ($_SESSION["user"]['role'] == 'admin') {
+						$role = 'Administrador';
+					} else if ($_SESSION["user"]['role'] == 'teacher') {
+						$role = 'Director de area';
+					} else {
+						$role = 'Estudiante';
+					}
+					echo $role;
 				?>
 				<h6>
 				<?php

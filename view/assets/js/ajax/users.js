@@ -15,7 +15,17 @@ $(document).ready(function() {
             { "data": "firstname" },
             { "data": "lastname" },
             { "data": "email" },
-            { "data": "role" },
+            { 
+                "data": null,
+                "render": function (data, type, row) {
+                    if (data.role == 'admin') {
+                        return `<span class="badge bg-success">Administrador</span>`;
+                    } else if (data.role == 'teacher') {
+                        return `<span class="badge bg-info">Director de area</span>`;
+                    }
+                }
+
+            },
             { "data": "created_at" },
             {
                 "data": null,
@@ -69,8 +79,8 @@ function editUser(id) {
         url: 'controller/ajax/ajax.getUser.php',
         method: 'GET',
         data: { id: id },
-        success: function(response) {
-            var user = JSON.parse(response);
+        dataType: 'json',
+        success: function(user) {
             $('#editUserId').val(user.id);
             $('#editFirstname').val(user.firstname);
             $('#editLastname').val(user.lastname);

@@ -1,6 +1,14 @@
 $(document).ready(function() {
     // Cuando el documento esté listo, llama a la función eventCards para cargar los eventos.
     eventCards();
+    var idStudent = $('#idStudent').val();
+
+    if (idStudent) {
+        loadStudentDashboard(idStudent);
+    } else {
+        console.log("El idStudent no existe.");
+    }
+
 });
 
 function formatDateTime(dateTimeString) {
@@ -37,8 +45,9 @@ async function eventCards() {
         dataType: 'json',
         success: async function(response) {
             let eventsHtml = ''; // Variable para almacenar el HTML generado para las tarjetas de eventos.
-
+            let i = 0;
             for (const event of response) {
+                i++;
                 let actionHtml = '';
 
                 if (role === 'student') {
@@ -68,6 +77,19 @@ async function eventCards() {
                 // Construye la tarjeta de evento y espera a que se resuelva.
                 const html = await buildEventCard(event, actionHtml);
                 eventsHtml += html; // Acumula el HTML generado.
+            }
+
+            if (i == 0) {
+                eventsHtml = `<div class="col-lg-12 mb-4">
+                                    <div class="card shadow-sm h-100 border-0 rounded-lg">
+                                        <div class="card-body d-flex flex-column">
+                                        <p class="card-text text-muted">
+                                            Sin eventos disponibles
+                                        </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                `;
             }
 
             // Una vez que se han generado todas las tarjetas, actualiza el HTML.
@@ -113,23 +135,9 @@ async function buildEventCard(event, actionHtml) {
     vacancies_available = event.vacancies_available - counter;
     // Devuelve el HTML de la tarjeta de evento con los detalles y la acción correspondiente.
     let role = $('#role').val();
-    let idArea = $('#idArea').val();
-    if (idArea == event.idArea && role == 'teacher') {
-    return `
-        <div class="col-lg-4 col-sm-6 col-12 mb-4">
-            <div class="card shadow-sm h-100 border-0 rounded-lg">
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title text-primary font-weight-bold mb-3">${event.name}</h5>
-                    <p class="card-text text-muted"><i class="fas fa-map-marker-alt"></i> <strong>Lugar:</strong> ${event.location}</p>
-                    <p class="card-text mb-3 text-secondary">${event.description}</p>
-                    <hr class="my-3">
-                    <p class="card-text mb-2"><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> ${formattedDateTime}</p>
-                    <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes disponibles:</strong> ${vacancies_available}</p>
-                    ${actionHtml}
-                </div>
-            </div>
-        </div>`;
-    } else if (role != 'teacher') {
+    let idUser = $('#idUser').val();
+
+    if (idUser == event.idUser && role == 'teacher') {
         return `
         <div class="col-lg-4 col-sm-6 col-12 mb-4">
             <div class="card shadow-sm h-100 border-0 rounded-lg">
@@ -144,6 +152,26 @@ async function buildEventCard(event, actionHtml) {
                 </div>
             </div>
         </div>`;
+    } else if (role != 'teacher') {
+        
+        if (role == 'student' && vacancies_available <= 0 && actionHtml != '<button class="btn btn-primary mt-auto" disabled>Ya postulado</button>') {
+            return '';
+        } else {
+            return `
+            <div class="col-lg-6 col-sm-6 col-12 mb-4">
+                <div class="card shadow-sm h-100 border-0 rounded-lg">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title text-primary font-weight-bold mb-3">${event.name}</h5>
+                        <p class="card-text text-muted"><i class="fas fa-map-marker-alt"></i> <strong>Lugar:</strong> ${event.location}</p>
+                        <p class="card-text mb-3 text-secondary">${event.description}</p>
+                        <hr class="my-3">
+                        <p class="card-text mb-2"><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> ${formattedDateTime}</p>
+                        <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes disponibles:</strong> ${vacancies_available}</p>
+                        ${actionHtml}
+                    </div>
+                </div>
+            </div>`;
+        }
     } else {
         return '';
     }
@@ -156,26 +184,32 @@ function updateEventsHtml(htmlContent) {
 }
 
 function applyEvent(idEvent) {
-    // Función para postularse a un evento.
+    // Mostrar el modal de confirmación primero
+    $('#applyEventModal .modal-body').html('<p>¿Estás seguro de que deseas registrarte a este evento?</p>');
+    
+    // Configurar el botón de confirmación para ejecutar la solicitud AJAX
+    $('#applyEventModal .btn-primary').off('click').on('click', function() {
+        const idStudent = $('#idStudent').val(); // Obtiene el ID del estudiante.
 
-    const idStudent = $('#idStudent').val(); // Obtiene el ID del estudiante.
+        $.ajax({
+            url: 'controller/ajax/ajax.forms.php',
+            type: 'POST',
+            data: { idEvent: idEvent, search: 'event', idStudent: idStudent, action: 'applyEvent'},
+            success: function(response) {
+                // Maneja la respuesta del servidor después de intentar postularse al evento.
+                $('#applyEventModal .modal-body').html(response 
+                    ? '<p>Te has postulado exitosamente al evento.</p>' 
+                    : '<p>Hubo un problema al postularte. Intenta de nuevo.</p>'
+                );
 
-    $.ajax({
-        url: 'controller/ajax/ajax.forms.php',
-        type: 'POST',
-        data: { idEvent: idEvent, search: 'event', idStudent: idStudent, action: 'applyEvent'},
-        success: function(response) {
-            // Maneja la respuesta del servidor después de intentar postularse al evento.
+                eventCards(); // Recarga la lista de eventos para reflejar el estado actualizado.
+                $('#applyEventModal').modal('hide');
 
-            $('#applyEventModal .modal-body').html(response 
-                ? '<p>Te has postulado exitosamente al evento.</p>' 
-                : '<p>Hubo un problema al postularte. Intenta de nuevo.</p>'
-            );
-            $('#applyEventModal').modal('show'); // Muestra un modal con el resultado.
-
-            eventCards(); // Recarga la lista de eventos para reflejar el estado actualizado.
-        }
+            }
+        });
     });
+
+    $('#applyEventModal').modal('show'); // Muestra el modal para confirmar.
 }
 
 function editEvent(idEvent) {
@@ -213,9 +247,29 @@ function lookCandidates(event) {
         success: function(students) {
             // Limpiar la tabla antes de llenarla
             $('#candidatesTable tbody').empty();
-            
+            let user = $('#idUser').val();
             // Iterar sobre los datos recibidos y agregar filas a la tabla
             $.each(students, function(index, student) {
+                let button = '';
+                if (student.status == 1) {
+                    button = `
+                                <button class="btn btn-primary" onclick="aprobar(1,${event}, ${student.idStudent}, ${user})">Aprobar evento</button>
+                                <button class="btn btn-danger" onclick="aprobar(0,${event}, ${student.idStudent}, ${user})">Rechazar evento</button>
+                            `;
+                } else if (student.status == 2) {
+                    button = `
+                                <button class="btn btn-primary" disabled>Aprobado</button>
+                            `;
+                } else if (student.status == 3) {
+                    button = `
+                                <button class="btn btn-primary" disabled>Rechazado</button>
+                            `;
+                } else {
+                    button = `
+                                <button class="btn btn-primary" onclick="accept(1,${event}, ${student.idStudent}, ${user})">Aceptar</button>
+                                <button class="btn btn-danger" onclick="accept(0,${event}, ${student.idStudent}, ${user})">Rechazar</button>
+                            `;
+                }
                 var row = '<tr>' +
                           '<td>' + (index + 1) + '</td>' +
                           '<td>' + student.firstname + '</td>' +
@@ -224,8 +278,7 @@ function lookCandidates(event) {
                           '<td>' + student.phone + '</td>' +
                           `<td>
                             <div class="btn-group">
-                                <button class="btn btn-primary" onclick="accept(1,${event}, ${student.idStudent})">Aceptar</button>
-                                <button class="btn btn-danger" onclick="accept(0,${event}, ${student.idStudent})">Rechazar</button>
+                                ${button}
                             </div>
                           </td>` +
                           '</tr>';
@@ -238,11 +291,11 @@ function lookCandidates(event) {
     });
 }
 
-function accept(status, event, student) {
+function accept(status, event, student, user) {
     $.ajax({
         url: 'controller/ajax/ajax.forms.php',
         method: 'POST',
-        data: { idEvent: event, idStudent: student, status: status, action: 'acceptCandidate' },
+        data: { idEvent: event, idStudent: student, idUser: user, status: status, action: 'acceptCandidate', search: 'event' },
         success: function(response) {
             $('#candidatesModal').modal('hide');
             lookCandidates(event);
@@ -250,6 +303,17 @@ function accept(status, event, student) {
     });
 }
 
+function aprobar(status, event, student, user) {
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        method: 'POST',
+        data: { idEvent: event, idStudent: student, idUser: user, status: status, action: 'approveEvent', search: 'event' },
+        success: function(response) {
+            $('#candidatesModal').modal('hide');
+            lookCandidates(event);
+        }
+    });
+}
 
 $('#editEventForm').on('submit', function(event) {
     event.preventDefault();
@@ -310,4 +374,22 @@ function deleteEvent(idEvent) {
         });
         
     });
+}
+
+function loadStudentDashboard(student) {
+    let eventList = $('#eventList');
+    let totalPoints = 0;
+
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        type: 'POST',
+        data: { search: 'student', action: 'loadStudentDashboard', idStudent: student },
+        dataType: 'json',
+        success: function(response) {
+
+        }
+    });
+    // Actualizar los puntos totales
+    $('#totalPoints').text(`${totalPoints} puntos`);
+    $('#stadistics').text(`${totalPoints}/480 puntos`);
 }
