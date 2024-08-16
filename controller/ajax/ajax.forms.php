@@ -224,6 +224,13 @@ if (isset($_POST['search'])) {
         }
         echo json_encode($events);
     }
+    
+    if ($_POST['search'] == 'studentEvents') {
+        $student = (isset($_POST['idStudent']))? $_POST['idStudent'] : null;
+        $searchStudentEvents = new FormsController();
+        $studentEvents = $searchStudentEvents->ctrStudentEventsPoints($student);
+        echo json_encode($studentEvents);
+    }
 }
 
 if (isset($_POST['firstname']) && isset($_POST['lastname']) && isset($_POST['email']) && isset($_POST['password']) && isset($_POST['role'])) {

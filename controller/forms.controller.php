@@ -324,4 +324,8 @@ class FormsController {
             return FormsModel::mdlDeclineEvent($idStudent, $idEvent, $idUser);
         }
     }
+
+    static public function ctrStudentEventsPoints($idStudent) {
+        return FormsModel::mdlStudentEventsPoints($idStudent);
+    }
 }

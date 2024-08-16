@@ -857,4 +857,19 @@ class FormsModel {
         return $response;
     }
 
+    static public function mdlStudentEventsPoints($idStudent) {
+        $sql = "SELECT se.points, se.idEvent, e.eventName, 
+                (SELECT d.minPoints FROM degrees d LEFT JOIN student s ON s.idDegree = d.idDegree WHERE s.idStudent = :idStudent ) as minPoints
+                    FROM students_events se 
+                    LEFT JOIN events e ON e.idEvent = se.idEvent 
+                WHERE se.idStudent = :idStudent AND se.statusEvent = 1";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetchAll();
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
 }

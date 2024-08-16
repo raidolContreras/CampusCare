@@ -139,3 +139,20 @@
     </div>
   </div>
 </div>
+
+<?php if ($_SESSION['user']['role'] == 'student'):?>
+
+  <div class="modal fade" id="achievementModal" tabindex="-1" role="dialog" aria-labelledby="achievementModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title" id="achievementModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body" id="achievementModalBody">
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php endif ?>

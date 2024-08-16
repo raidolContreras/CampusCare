@@ -126,17 +126,26 @@ function checkApplicationStatus(idStudent, idEvent) {
 
 async function buildEventCard(event, actionHtml) {
     // Función para construir el HTML de una tarjeta de evento.
-    const formattedDateTime = formatDateTime(`${event.date} ${event.start_time}`); // Formatea la fecha y hora del evento.
+    const eventDateTime = new Date(`${event.date} ${event.start_time}`);
+    const currentDateTime = new Date();
+
+    // Verifica si la fecha del evento ya pasó
+    if (eventDateTime < currentDateTime) {
+        return ''; // Si la fecha ya pasó, no retorna nada
+    }
+
+    const formattedDateTime = formatDateTime(eventDateTime); // Formatea la fecha y hora del evento.
     let counter = 0;
     // Espera a que se resuelva la promesa para obtener el conteo de estudiantes.
     const count = await getStudentsEvent(event.idEvent);
     
     counter = (count.students != null) ? count.students : 0;
-    vacancies_available = event.vacancies_available - counter;
-    // Devuelve el HTML de la tarjeta de evento con los detalles y la acción correspondiente.
+    const vacanciesAvailable = event.vacancies_available - counter;
+
     let role = $('#role').val();
     let idUser = $('#idUser').val();
 
+    // Condiciones para la construcción de la tarjeta de evento
     if (idUser == event.idUser && role == 'teacher') {
         return `
         <div class="col-lg-4 col-sm-6 col-12 mb-4">
@@ -147,18 +156,17 @@ async function buildEventCard(event, actionHtml) {
                     <p class="card-text mb-3 text-secondary">${event.description}</p>
                     <hr class="my-3">
                     <p class="card-text mb-2"><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> ${formattedDateTime}</p>
-                    <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes disponibles:</strong> ${vacancies_available}</p>
+                    <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes disponibles:</strong> ${vacanciesAvailable}</p>
                     ${actionHtml}
                 </div>
             </div>
         </div>`;
     } else if (role != 'teacher') {
-        
-        if (role == 'student' && vacancies_available <= 0 && actionHtml != '<button class="btn btn-primary mt-auto" disabled>Ya postulado</button>') {
+        if (role == 'student' && vacanciesAvailable <= 0 && actionHtml != '<button class="btn btn-primary mt-auto" disabled>Ya postulado</button>') {
             return '';
         } else {
             return `
-            <div class="col-lg-6 col-sm-6 col-12 mb-4">
+            <div class="col-lg-4 col-sm-6 col-12 mb-4">
                 <div class="card shadow-sm h-100 border-0 rounded-lg">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-primary font-weight-bold mb-3">${event.name}</h5>
@@ -166,7 +174,7 @@ async function buildEventCard(event, actionHtml) {
                         <p class="card-text mb-3 text-secondary">${event.description}</p>
                         <hr class="my-3">
                         <p class="card-text mb-2"><i class="fas fa-calendar-alt"></i> <strong>Fecha:</strong> ${formattedDateTime}</p>
-                        <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes disponibles:</strong> ${vacancies_available}</p>
+                        <p class="card-text mb-3"><i class="fas fa-users"></i> <strong>Vacantes disponibles:</strong> ${vacanciesAvailable}</p>
                         ${actionHtml}
                     </div>
                 </div>
@@ -379,17 +387,53 @@ function deleteEvent(idEvent) {
 function loadStudentDashboard(student) {
     let eventList = $('#eventList');
     let totalPoints = 0;
+    let minPoints = 0;
 
     $.ajax({
         url: 'controller/ajax/ajax.forms.php',
         type: 'POST',
-        data: { search: 'student', action: 'loadStudentDashboard', idStudent: student },
+        data: { search: 'studentEvents', idStudent: student },
         dataType: 'json',
         success: function(response) {
+            eventList.empty(); // Limpia el contenido previo
 
+            if (response && response.length > 0) {
+                response.forEach(data => {
+                    const listItem = $(`
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="row">
+                                <span class="col-10">${data.eventName}</span>
+                                <span class="badge bg-primary rounded-pill col-2">${data.points} puntos</span>
+                            </div>
+                        </li>
+                    `);
+                    eventList.append(listItem);
+                    totalPoints += data.points;
+                    minPoints = data.minPoints;
+                });
+
+                $('#totalPoints').html(`<strong>${totalPoints}</strong> / ${minPoints} puntos`);
+
+                if (totalPoints >= minPoints) {
+                    showAchievementModal();
+                }
+            } else {
+                eventList.html('<li class="list-group-item text-muted">No se encontraron eventos.</li>');
+            }
+        },
+        error: function() {
+            eventList.html('<li class="list-group-item text-danger">Error al cargar los eventos.</li>');
         }
     });
-    // Actualizar los puntos totales
-    $('#totalPoints').text(`${totalPoints} puntos`);
-    $('#stadistics').text(`${totalPoints}/480 puntos`);
+
+    function showAchievementModal() {
+        $('#achievementModalLabel').text('¡Felicidades!');
+        $('#achievementModalBody').html(`
+            <p>Has alcanzado el 100% de puntos. ¡Excelente trabajo!</p>
+            <div class="d-grid gap-2">
+                <button type="button" class="btn btn-success">Iniciar trámites de finalización</button>
+            </div>
+        `);
+        $('#achievementModal').modal('show');
+    }
 }
