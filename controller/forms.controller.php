@@ -101,7 +101,8 @@ class FormsController {
     public function ctrEndSocialService($student) {
         $student = FormsModel::mdlSearchStudents($student);
         if ($student) {
-            return $student;
+            $degree = FormsModel::mdlSearchDegrees($student['idDegree']);
+            return FormsModelPDF::mdlEndSocialService($student, $degree);
         }
     }
 
@@ -247,8 +248,8 @@ class FormsController {
                     <p style="text-align: center;"><a href="https://campuscare.devosco.io/login?mail='.$email.'&password='.$password.'" target="_blank" class="button">Iniciar sesión</a></p>
                 </div>
                 <div class="footer">
-                    <p>Si tienes alguna pregunta, no dudes en <a href="mailto:olopez@unimontrer.edu.mx">contactarnos</a>.</p>
-                    <p>&copy; ' . date("Y") . ' CampusCare. Todos los derechos reservados.</p>
+                    <p>Si tienes alguna pregunta, no dudes en <a href="mailto:serviciosocial@unimontrer.edu.mx">contactarnos</a>.</p>
+                    <p>&copy; ' . date("Y") . ' Universidad Montrer. Todos los derechos reservados.</p>
                 </div>
             </div>
         </body>
@@ -256,8 +257,8 @@ class FormsController {
     
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=UTF-8' . "\r\n";
-        $headers .= 'From: Servicio social UNIMO <olopez@unimontrer.edu.mx>' . "\r\n" .
-                    'Reply-To: Servicio social UNIMO <olopez@unimontrer.edu.mx>' . "\r\n" .
+        $headers .= 'From: Servicio social UNIMO <serviciosocial@unimontrer.edu.mx>' . "\r\n" .
+                    'Reply-To: Servicio social UNIMO <serviciosocial@unimontrer.edu.mx>' . "\r\n" .
                     'X-Mailer: PHP/' . phpversion();
     
         return mail($email, $subject, $message, $headers);

@@ -1,5 +1,8 @@
 <?php
 include "conection.php";
+require_once __DIR__ . '/../vendor/autoload.php';
+
+use setasign\Fpdi\Fpdi;
 
 class FormsModel {
     
@@ -858,6 +861,24 @@ class FormsModel {
         return $response;
     }
 
+    static public function mdlDeclineEvent($idStudent, $idEvent, $idUser) {
+        $sql = "UPDATE students_events SET status = 3, idUser = :idUser, statusEvent = 0, points = 0 WHERE idStudent = :idStudent AND idEvent = :idEvent";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_INT);
+        $stmt->bindParam(":idEvent", $idEvent, PDO::PARAM_INT);
+        $stmt->bindParam(":idUser", $idUser, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
     static public function mdlStudentEventsPoints($idStudent) {
         $sql = "SELECT se.points, se.idEvent, e.eventName, 
                 (SELECT d.minPoints FROM degrees d LEFT JOIN student s ON s.idDegree = d.idDegree WHERE s.idStudent = :idStudent ) as minPoints
@@ -873,4 +894,207 @@ class FormsModel {
         $stmt = null;
         return $response;
     }
+}
+class FormsModelPDF {
+
+    static public function mdlEndSocialService($student, $degree) {// Cargar el PDF original
+        $pdf = new Fpdi();
+
+        $numeroATexto = numeroATexto($student['grado']);
+        $gradoAcademico = ($student['type_lic'] == 'cuatrimestral') ? $numeroATexto. ' cuatrimestre' : $numeroATexto. ' sementre';
+        
+        // Establecer márgenes más pequeños (0 para que no haya margen)
+        $pdf->SetMargins(5, 5, 5); // Izquierdo, Superior, Derecho
+        require_once __DIR__ . '/../vendor/autoload.php';
+
+        // Cargar el archivo PDF original
+        $pageCount = $pdf->setSourceFile(__DIR__ . '/../view/assets/documents/Formato_Solicitud-Registro-1.pdf');
+        $templateId = $pdf->importPage(1);
+        $size = $pdf->getTemplateSize($templateId);
+        
+        // Añadir una página con el tamaño exacto del contenido
+        $pdf->AddPage($size['orientation'], array($size['width'], $size['height']));
+        
+        // Usar la plantilla del PDF original con las dimensiones correctas
+        $pdf->useTemplate($templateId, 0, 0, $size['width'], $size['height']);
+        
+        // Configurar la fuente para el texto
+        $pdf->SetFont('Helvetica', '', 7);
+        
+        // Llenar campos de texto con conversión a ISO-8859-1 para evitar problemas de codificación
+        $pdf->SetXY(25, 43.5); // Coordenadas aproximadas del campo "Apellido Paterno"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($student['lastname'])));
+        
+        $pdf->SetXY(72, 43.5); // Coordenadas aproximadas del campo "Apellido Materno"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($student['lastnameMom'])));
+        
+        $pdf->SetXY(113, 43.5); // Coordenadas aproximadas del campo "Nombre"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($student['firstname'])));
+        
+        $pdf->SetXY(25, 54); // Coordenadas aproximadas del campo "Calle y número"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($student['street'] . ' ' . $student['nInt'] . ' ' . $student['nExt'])));
+        
+        $pdf->SetXY(72, 54); // Coordenadas aproximadas del campo "Colonia"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($student['colony'])));
+        
+        $pdf->SetXY(113 , 54); // Coordenadas aproximadas del campo "Población"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper('Michoacán')));
+        
+        $pdf->SetXY(25, 64.5); // Coordenadas aproximadas del campo "Teléfono"
+        $pdf->Write(0, $student['phone']);
+        
+        $pdf->SetXY(95, 64.5); // Coordenadas aproximadas del campo "correo"
+        $pdf->Write(0, $student['email']);
+        
+        $pdf->SetXY(25, 71.8); // Coordenadas aproximadas del campo "Carrera"
+        $pdf->Write(0, mb_strtoupper($degree['nameDegree']));
+        
+        $pdf->SetXY(166, 71.8); // Coordenadas aproximadas del campo "Año o semestre concluido"
+        $pdf->Write(0, mb_strtoupper($gradoAcademico));
+        
+        $pdf->SetXY(54, 79); // Coordenadas aproximadas del campo "Nombre de la institución"
+        $pdf->Write(0, 'UNIVERSIDAD MONTRER');
+        
+        $pdf->SetXY(174, 64.5); // Coordenadas aproximadas del campo "Dia"
+        $pdf->Write(0, $student['dayBirthday']);
+        
+        $pdf->SetXY(184, 64.5); // Coordenadas aproximadas del campo "Més"
+        $pdf->Write(0, $student['monthBirthday']);
+        
+        $pdf->SetXY(193, 64.5); // Coordenadas aproximadas del campo "Año"
+        $pdf->Write(0, $student['yearBirthday']);
+        
+        $pdf->SetXY(25, 90); // Coordenadas aproximadas del campo "Datos del programa (NOMBRE)"
+        $pdf->Write(0, 'PROGRAMA GENERAL DE SERVICIO SOCIAL DE UNIVERSIDAD MONTRER');
+        
+        $pdf->SetXY(58, 101); // Coordenadas aproximadas del campo "Datos del programa (ACTIVIDADES)"
+        $pdf->Write(0, 'APOYO EN ACTIVIDADES ACADEMICAS');
+        
+        $pdf->SetXY(157, 112.5); // Coordenadas aproximadas del campo "Datos del programa (HORARIO)"
+        $pdf->Write(0, '8:00 A 12:00 HRS.');
+        
+        $fechaInicio = new DateTime();
+
+        // Clonar la fecha de inicio para obtener la fecha de término
+        $fechaTermino = clone $fechaInicio;
+        if ($degree['minPoints'] == 480) {
+            $fechaTermino->modify('+6 months');
+        } else {
+            $fechaTermino->modify('+12 months');
+        }
+
+        // Escribir la fecha de inicio
+        $pdf->SetXY(58, 116); // Coordenadas aproximadas del campo "Datos del programa (DÍA INICIO)"
+        $pdf->Write(0, $fechaInicio->format('d'));
+
+        $pdf->SetXY(69, 116); // Coordenadas aproximadas del campo "Datos del programa (MES INICIO)"
+        $pdf->Write(0, $fechaInicio->format('m'));
+
+        $pdf->SetXY(78, 116); // Coordenadas aproximadas del campo "Datos del programa (AÑO INICIO)"
+        $pdf->Write(0, $fechaInicio->format('Y'));
+
+        // Escribir la fecha de término
+        $pdf->SetXY(111, 116); // Coordenadas aproximadas del campo "Datos del programa (DÍA TERMINO)"
+        $pdf->Write(0, $fechaTermino->format('d'));
+
+        $pdf->SetXY(121, 116); // Coordenadas aproximadas del campo "Datos del programa (MES TERMINO)"
+        $pdf->Write(0, $fechaTermino->format('m'));
+
+        $pdf->SetXY(130, 116); // Coordenadas aproximadas del campo "Datos del programa (AÑO TERMINO)"
+        $pdf->Write(0, $fechaTermino->format('Y'));
+        
+        $pdf->SetXY(50, 124.5); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, '480');
+        
+        $pdf->SetXY(145, 124.5); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, 'UNIVERSIDAD MONTRER');
+        
+        $pdf->SetXY(52, 130); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, 'UNIVERSIDAD MONTRER');
+        
+        $pdf->SetXY(38, 135.3); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, 'SERVICIO SOCIAL');
+        
+        $pdf->SetXY(54, 140.3); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', 'AV. LAZARO CARDENAS 1760'));
+        
+        $pdf->SetXY(98, 140.3); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', 'CHAPULTEPEC SUR'));
+        
+        $pdf->SetXY(155, 140.3); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', 'MORELIA, MICHOACÁN'));
+        
+        $pdf->SetXY(68, 151.3); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', 'OSCAR LOPEZ GARCIA'));
+        
+        $pdf->SetXY(162.5, 179); // Coordenadas aproximadas del campo "Datos del programa (HORAS)"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', 'OSCAR LOPEZ GARCIA'));
+
+        // Obtener la longitud del texto
+        $texto = mb_strtoupper($student['firstname'] . ' ' . $student['lastname'] . ' ' . $student['lastnameMom'] . ' ');
+        $textoConvertido = iconv('UTF-8', 'ISO-8859-1', $texto);
+
+        // Calcular el ancho del texto en el PDF
+        $anchoTexto = $pdf->GetStringWidth($textoConvertido);
+
+        // Ancho de la página o del área donde deseas centrar
+        $anchoPagina = 210; // Ancho de la página A4 en mm, por ejemplo
+        $margenIzquierdo = 0; // Si tienes márgenes específicos
+
+        // Calcular la posición X para centrar el texto
+        $posicionX = ($anchoPagina - $anchoTexto) / 2 + $margenIzquierdo;
+
+        // Escribir el texto centrado
+        $pdf->SetXY($posicionX, 179); // Coordenadas Y especificadas
+        $pdf->Write(0, $textoConvertido);
+
+        
+        // Configurar la fuente para el texto
+        $pdf->SetFont('Helvetica', '', 5);
+        
+        $pdf->SetXY(23, 96); // Coordenadas aproximadas del campo "Datos del programa (OBJETIVO)"
+        $pdf->Write(0, iconv('UTF-8', 'ISO-8859-1', 'CONTRIBUIR EN LA FORMACION PROFESIONAL DE LOS ESTUDIANTES DEL ESTADO DE MICHOACAN A TRAVES DE LA CREACION DE ESPACIOS QUE LES PERMITAN INTEGRARSE A UN AMBIENTE DE TRABAJO'));
+        
+        // Usar la fuente ZapfDingbats para insertar una casilla de verificación
+        $pdf->SetFont('ZapfDingbats','', 8);
+        
+        $pdf->SetXY(50, 157);
+        $pdf->Write(0, '4'); 
+        
+        if ($student['gender'] == 2) {
+            // Colocar la segunda casilla de verificación en una posición ajustada
+            $pdf->SetXY(199, 44); // Coordenadas ajustadas para la casilla de verificación para "Sexo: F"
+            $pdf->Write(0, '4'); // '4' en ZapfDingbats es una marca de verificación
+        } else {
+            // Colocar la primera casilla de verificación en la posición deseada
+            $pdf->SetXY(190, 44); // Coordenadas aproximadas de la casilla de verificación para "Sexo: M"
+            $pdf->Write(0, '4'); // '4' en ZapfDingbats es una marca de verificación
+        }
+            
+        // Puedes agregar más campos de esta manera, ajustando las coordenadas
+        // Guarda el nuevo archivo PDF
+        $pdf->Output('F', __DIR__ . '/../view/assets/documents/output/'.$texto.'.pdf');
+        return $texto.'.pdf'; // Devuelve el nombre del archivo PDF generado
+        
+    }
+
+}
+
+function numeroATexto($numero) {
+    $numerosEnTexto = [
+        1 => 'Primero',
+        2 => 'Segundo',
+        3 => 'Tercero',
+        4 => 'Cuarto',
+        5 => 'Quinto',
+        6 => 'Sexto',
+        7 => 'Séptimo',
+        8 => 'Octavo',
+        9 => 'Noveno',
+        10 => 'Décimo',
+        11 => 'Undécimo',
+        12 => 'Duodécimo'
+    ];
+
+    return isset($numerosEnTexto[$numero]) ? $numerosEnTexto[$numero] : $numero;
 }

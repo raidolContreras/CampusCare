@@ -442,16 +442,25 @@ function endSocialService(idStudent) {
         url: 'controller/ajax/ajax.forms.php',
         type: 'POST',
         data: { idStudent: idStudent, search: 'student', action: 'end social service' },
+        dataType: 'json',
         success: function(response) {
-            $('#achievementModal').modal('hide');
-            $('#socialServiceModal').modal('show');
-            loadStudentDashboard(idStudent);
+            // Verificar que response contiene la ruta del archivo
+            console.log('Server Response:', response);
+            
+            // Asumiendo que response contiene el nombre del archivo o la ruta relativa
+            var filePath = './view/assets/documents/output/' + response;
+            
+            // Verificar la ruta generada
+            console.log('File Path:', filePath);
+            
+            // Crear un enlace para descargar el archivo
+            var link = document.createElement('a');
+            link.href = filePath;
+            link.download = response.split('/').pop(); // Obtener solo el nombre del archivo
+            link.click();
         },
-        error: function() {
-            $('#achievementModal').modal('hide');
-            $('#socialServiceModal').modal('show');
-            loadStudentDashboard(idStudent);
-            alert('Error al finalizar el trámite de finalización.');
+        error: function(xhr, status, error) {
+            console.error('Error al descargar el archivo: ', status, error);
         }
-    });  
+    });
 }
