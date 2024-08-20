@@ -458,11 +458,12 @@ class FormsModel {
 
     public static function mdlRegisterStudent($data) {
         try {
-            $stmt = Conexion::conectar()->prepare("INSERT INTO student(matricula, firstname, lastname, idDegree, grado, email, phone, emergenci_phone, parent, type_lic, street, nInt, nExt, colony, cp, dayBirthday, monthBirthday, yearBirthday, gender, idCourse) VALUES (:matricula, :firstname, :lastname, :idDegree, :grado, :email, :phone, :emergenci_phone, :parent, :type_lic, :street, :nInt, :nExt, :colony, :cp, :dayBirthday, :monthBirthday, :yearBirthday, :gender, (SELECT idCourse FROM courses WHERE active = 1))");
+            $stmt = Conexion::conectar()->prepare("INSERT INTO student(matricula, firstname, lastname, lastnameMom, idDegree, grado, email, phone, emergenci_phone, parent, type_lic, street, nInt, nExt, colony, cp, dayBirthday, monthBirthday, yearBirthday, gender, idCourse) VALUES (:matricula, :firstname, :lastname, :lastnameMom, :idDegree, :grado, :email, :phone, :emergenci_phone, :parent, :type_lic, :street, :nInt, :nExt, :colony, :cp, :dayBirthday, :monthBirthday, :yearBirthday, :gender, (SELECT idCourse FROM courses WHERE active = 1))");
             
             $stmt->bindParam(':matricula', $data['matricula'], PDO::PARAM_STR);
             $stmt->bindParam(':firstname', $data['nombre'], PDO::PARAM_STR);
-            $stmt->bindParam(':lastname', $data['apellidos'], PDO::PARAM_STR);
+            $stmt->bindParam(':lastname', $data['apellidoP'], PDO::PARAM_STR);
+            $stmt->bindParam(':lastnameMom', $data['apellidoM'], PDO::PARAM_STR);
             $stmt->bindParam(':idDegree', $data['licenciatura'], PDO::PARAM_INT);
             $stmt->bindParam(':grado', $data['grado'], PDO::PARAM_INT);
             $stmt->bindParam(':email', $data['correoInstitucional'], PDO::PARAM_STR);

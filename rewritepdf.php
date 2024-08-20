@@ -9,7 +9,6 @@ $pdf = new Fpdi();
 // Establecer márgenes más pequeños (0 para que no haya margen)
 $pdf->SetMargins(5, 5, 5); // Izquierdo, Superior, Derecho
 
-
 // Cargar el archivo PDF original
 $pageCount = $pdf->setSourceFile('view/assets/documents/Formato_Solicitud-Registro-1.pdf');
 $templateId = $pdf->importPage(1);

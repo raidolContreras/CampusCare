@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>UNIMO - Servicio Social</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <?php include "css.php"; ?>
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 </head>

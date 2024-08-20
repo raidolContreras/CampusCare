@@ -97,6 +97,13 @@ class FormsController {
     public function ctrSearchStudents($student) {
         return FormsModel::mdlSearchStudents($student);
     }
+    
+    public function ctrEndSocialService($student) {
+        $student = FormsModel::mdlSearchStudents($student);
+        if ($student) {
+            return $student;
+        }
+    }
 
     public function ctrAcceptStudent($student) {
         $response = FormsModel::mdlAcceptStudent($student);

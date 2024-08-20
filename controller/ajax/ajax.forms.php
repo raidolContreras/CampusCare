@@ -87,12 +87,16 @@ if (isset($_POST['search'])) {
             } elseif ($_POST['action'] == 'getStudent') {
 
                 $students = $searchStudents->ctrSearchStudents($student);
+            } elseif ($_POST['action'] == 'end social service') {
+
+                $students = $searchStudents->ctrEndSocialService($_POST['idStudent']);
 
             } elseif ($_POST['action'] == 'addStudent') {
 
                 $matricula = $_POST['matricula'];
                 $nombre = $_POST['nombre'];
-                $apellidos = ($_POST['apellidoMaterno'] != '') ? $_POST['apellidoPaterno'] . ' ' . $_POST['apellidoMaterno'] : $_POST['apellidoPaterno'];
+                $apellidoP = $_POST['apellidoPaterno'];
+                $apellidoM = $_POST['apellidoMaterno'];
                 $licenciatura = $_POST['licenciatura'];
                 $tipoLicenciatura = $_POST['tipoLicenciatura'];
                 $grado = $_POST['grado'];
@@ -115,7 +119,8 @@ if (isset($_POST['search'])) {
                 $data = array(
                     'matricula' => $matricula,
                     'nombre' => $nombre,
-                    'apellidos' => $apellidos,
+                    'apellidoP' => $apellidoP,
+                    'apellidoM' => $apellidoM,
                     'licenciatura' => $licenciatura,
                     'tipoLicenciatura' => $tipoLicenciatura,
                     'grado' => $grado,

@@ -7,7 +7,7 @@ $pagina = $pagina ? $pagina : 'inicio';
 // Verificar si el usuario está logueado
 if (!isset($_SESSION['logged'])) {
     // Si no está logueado, mostrar página de login
-    if ($pagina == 'login' || $pagina == 'registerStudent') {
+    if ($pagina == 'login' || $pagina == 'RegisterStudent') {
         include_once 'view/pages/'.$pagina.'.php';
     } else {
         // Si intenta acceder a otra página sin loguearse, redirigir al login

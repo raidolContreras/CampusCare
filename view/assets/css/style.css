@@ -177,12 +177,12 @@ h4,
 
 h5,
 .h5 {
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 
 h6,
 .h6 {
-  font-size: 1rem;
+  font-size: 0.85rem;
 }
 
 p {
@@ -15716,7 +15716,7 @@ body {
 }
 
 .list-group-item:hover {
-  background-color: #BFEEDC !important;
+  background-color: #1f782c !important;
   cursor: pointer;
 }
 

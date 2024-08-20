@@ -169,7 +169,12 @@
             </div>
             <div class="col-md-3 form-group">
                 <label for="anioNacimiento" class="form-label">Año de nacimiento</label>
-                <input type="number" class="form-control" id="anioNacimiento" name="anioNacimiento" placeholder="Año" required>
+                <select name="anioNacimiento" id="anioNacimiento" class="form-select" required>
+                    <option value="">Seleccione un año</option>
+                    <?php for ($i = date('Y'); $i >= 1970; $i--) {?>
+                        <option value="<?php echo $i;?>"><?php echo $i;?></option>
+                    <?php }?>
+                </select>
             </div>
             <div class="col-md-3 form-group">
                 <label for="genero" class="form-label">Género</label>

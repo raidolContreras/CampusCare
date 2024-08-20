@@ -61,15 +61,14 @@ async function eventCards() {
                 } else if (role === 'admin') {
                     // Si el rol es 'admin', agrega botones para editar y borrar el evento.
                     actionHtml = `
-                        <div class="btn-group" role="group" aria-label="Acciones">
+                        <div class="btn-group  mt-auto" role="group" aria-label="Acciones">
                             <button onclick="editEvent(${event.idEvent})" class="btn btn-primary mt-auto">Editar evento</button> 
                             <button onclick="deleteEvent(${event.idEvent})" class="btn btn-danger mt-auto">Borrar evento</button>
                         </div>`;
                 } else {
                     // Si el rol es otro (por ejemplo, un usuario regular), agrega un botón para ver el evento.
                     actionHtml = `
-                        <div class="btn-group" role="group" aria-label="Acciones">
-                            <button onclick="lookEvent(${event.idEvent})" class="btn btn-primary mt-auto">Ver evento</button>
+                        <div class="btn-group  mt-auto" role="group" aria-label="Acciones">
                             <button onclick="lookCandidates(${event.idEvent})" class="btn btn-info mt-auto">Ver candidatos</button>
                         </div>`;
                 }
@@ -401,10 +400,8 @@ function loadStudentDashboard(student) {
                 response.forEach(data => {
                     const listItem = $(`
                         <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div class="row">
-                                <span class="col-10">${data.eventName}</span>
-                                <span class="badge bg-primary rounded-pill col-2">${data.points} puntos</span>
-                            </div>
+                            <span>${data.eventName}</span>
+                            <span class="badge bg-success rounded-pill" style="max-height: 18px;">${data.points} puntos</span>
                         </li>
                     `);
                     eventList.append(listItem);
@@ -427,13 +424,34 @@ function loadStudentDashboard(student) {
     });
 
     function showAchievementModal() {
+        let idStudent = $('#idStudent').val();
         $('#achievementModalLabel').text('¡Felicidades!');
         $('#achievementModalBody').html(`
             <p>Has alcanzado el 100% de puntos. ¡Excelente trabajo!</p>
             <div class="d-grid gap-2">
-                <button type="button" class="btn btn-success">Iniciar trámites de finalización</button>
+                <button type="button" class="btn btn-success" onclick="endSocialService(${idStudent})">Iniciar trámites de finalización</button>
             </div>
         `);
         $('#achievementModal').modal('show');
     }
+
+}
+
+function endSocialService(idStudent) {
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        type: 'POST',
+        data: { idStudent: idStudent, search: 'student', action: 'end social service' },
+        success: function(response) {
+            $('#achievementModal').modal('hide');
+            $('#socialServiceModal').modal('show');
+            loadStudentDashboard(idStudent);
+        },
+        error: function() {
+            $('#achievementModal').modal('hide');
+            $('#socialServiceModal').modal('show');
+            loadStudentDashboard(idStudent);
+            alert('Error al finalizar el trámite de finalización.');
+        }
+    });  
 }
