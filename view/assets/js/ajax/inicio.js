@@ -61,7 +61,7 @@ async function eventCards() {
                 } else if (role === 'admin') {
                     // Si el rol es 'admin', agrega botones para editar y borrar el evento.
                     actionHtml = `
-                        <div class="btn-group  mt-auto" role="group" aria-label="Acciones">
+                        <div class="btn-group btn-block  mt-auto" role="group" aria-label="Acciones">
                             <button onclick="editEvent(${event.idEvent})" class="btn btn-primary mt-auto">Editar evento</button> 
                             <button onclick="deleteEvent(${event.idEvent})" class="btn btn-danger mt-auto">Borrar evento</button>
                         </div>`;
@@ -147,7 +147,7 @@ async function buildEventCard(event, actionHtml) {
     // Condiciones para la construcción de la tarjeta de evento
     if (idUser == event.idUser && role == 'teacher') {
         return `
-        <div class="col-lg-4 col-sm-6 col-12 mb-4">
+        <div class="col-xl-4 col-md-6 col-12 mb-4">
             <div class="card shadow-sm h-100 border-0 rounded-lg">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title text-primary font-weight-bold mb-3">${event.name}</h5>
@@ -165,7 +165,7 @@ async function buildEventCard(event, actionHtml) {
             return '';
         } else {
             return `
-            <div class="col-lg-4 col-sm-6 col-12 mb-4">
+            <div class="col-xl-4 col-md-6 col-12 mb-4">
                 <div class="card shadow-sm h-100 border-0 rounded-lg">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title text-primary font-weight-bold mb-3">${event.name}</h5>

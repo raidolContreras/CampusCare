@@ -227,7 +227,15 @@
             </div>
             <div class="col-md-6 form-group">
                 <label for="parentesco" class="form-label">Parentesco</label>
-                <input type="text" class="form-control" id="parentesco" name="parentesco" placeholder="Ingresa tu parentesco" required>
+                <select class="form-select" id="parentesco" name="parentesco" required>
+                    <option value="Padre">Padre</option>
+                    <option value="Madre">Madre</option>
+                    <option value="Otro">Otro</option>
+                </select>
+            </div>
+            <div class="col-md-6 form-group d-none" id="parentescoEspecificar">
+                <label for="otroParentesco" class="form-label">Especificar Parentesco</label>
+                <input type="text" class="form-control" id="otroParentesco" name="otroParentesco" placeholder="Especifica el parentesco">
             </div>
         </div>
         <button type="button" class="btn btn-secondary prev-step">Anterior</button>
@@ -359,6 +367,16 @@
                 }
             });
 
+            $('#parentesco').on('change', function () {
+                if ($(this).val() === 'Otro') {
+                    $('#parentescoEspecificar').removeClass('d-none').addClass('d-block');
+                    $('#otroParentesco').prop('required', true); // Hacer el campo requerido
+                } else {
+                    $('#parentescoEspecificar').removeClass('d-block').addClass('d-none');
+                    $('#otroParentesco').prop('required', false); // Eliminar el requerimiento
+                }
+            });
+
             $('#registerStudentForm').on('submit', function (event) {
                 event.preventDefault();
                 if (validateForm()) {
@@ -389,7 +407,6 @@
                     });
                 }
             });
-
 
             function validateForm() {
                 let isValid = true;

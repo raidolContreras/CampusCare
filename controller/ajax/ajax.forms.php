@@ -103,7 +103,7 @@ if (isset($_POST['search'])) {
                 $correoInstitucional = $_POST['correoInstitucional'];
                 $telefonoContacto = $_POST['telefonoContacto'];
                 $telefonoEmergencia = $_POST['telefonoEmergencia'];
-                $parentesco = $_POST['parentesco'];
+                $parentesco = ($_POST['parentesco'] == 'Otro') ? $_POST['parentesco'] : $_POST['otroParentesco'];
 
                 // Aquí puedes agregar el resto de los campos
                 $calle = $_POST['calle'];

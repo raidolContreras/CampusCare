@@ -55,7 +55,7 @@ function initializeDataTable() {
                         </button>`;
                     }
 
-                    return `<div class="btn-group" role="group">${buttons}</div>`;
+                    return `<div class="btn-group btn-block" role="group">${buttons}</div>`;
                 } else {
                     return `<button type="button" class="btn btn-info" onclick="showCommentsModal('${data.comments}')">
                                 <i class="fad fa-comments"></i>

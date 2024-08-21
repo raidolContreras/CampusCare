@@ -118,7 +118,7 @@ body {
         </div>
     </div>
 
-    <div class="row">
+    <div class="row float-right">
         <?php if ($role == 'Estudiante'):?>
 
             <div class="col-md-8">

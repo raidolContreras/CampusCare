@@ -36,7 +36,7 @@ $(document).ready(function() {
                         }
 
                         return `
-                            <div class="btn-group" role="group" aria-label="Acciones">
+                            <div class="btn-group btn-block" role="group" aria-label="Acciones">
                                 ${activateButton}
                                 <button type="button" class="btn btn-primary" onclick="editCourse(${data.idCourse})"><i class="fad fa-edit"></i></button>
                                 <button type="button" class="btn btn-danger" onclick="deleteCourse(${data.idCourse})"><i class="fad fa-trash-alt"></i></button>

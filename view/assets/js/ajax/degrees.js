@@ -22,7 +22,7 @@ $(document).ready(function() {
                 "data": null,
                 render: function (data, type, row) {
                     return `
-                        <div class="btn-group" role="group" aria-label="Acciones">
+                        <div class="btn-group btn-block" role="group" aria-label="Acciones">
                             <button type="button" class="btn btn-primary" onclick="editUser(${data.idStudent})"><i class="fad fa-edit"></i></button>
                             <button type="button" class="btn btn-danger" onclick="deleteUser(${data.idStudent})"><i class="fad fa-trash-alt"></i></button>
                         </div>`;

@@ -3,18 +3,15 @@
 $pagina = filter_input(INPUT_GET, 'pagina', FILTER_SANITIZE_STRING);
 $pagina = $pagina ? $pagina : 'inicio';
 
-function setActiveClass($pageName, $currentPage) {
-    return $pageName === $currentPage ? 'active disabled' : '';
-}
 ?>
 <div class="row">
     <div class="col-2 px-0 sidebar sidebar-collapse pt-2">
         <div class="container">
-            <a class="navbar-brand" href="./">
+            <a href="./" class="icon-header-logo">
                 <img src="view/assets/images/logo.png" alt="Logo" class="logo">
             </a>
             <nav class="">
-                <div class="row schools px-2" style="padding-right: 0 !important;">
+                <div class="row schools" style="padding-right: 0 !important;">
                 <a href="inicio" class="mt-3 menu-top py-2 <?= setActiveClass('inicio', $pagina) ?>">
                     <div class="row">
                         <div class="col-2">

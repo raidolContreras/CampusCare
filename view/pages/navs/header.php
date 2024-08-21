@@ -1,8 +1,17 @@
+<?php
+
+$pagina = filter_input(INPUT_GET, 'pagina', FILTER_SANITIZE_STRING);
+$pagina = $pagina ? $pagina : 'inicio';
+
+function setActiveClass($pageName, $currentPage) {
+    return $pageName === $currentPage ? 'active disabled' : '';
+}
+?>
 <header>
 	<nav class="navbar">
 		<div class="container">
 				<div class="navbar-brand">
-					<img src="view/assets/images/logo.png" alt="Logo" class="logo">
+					<img src="view/assets/images/logo.png" alt="Logo" class="back-logo">
 				</div>
 			<button class="navbar-toggler boton-sombra" type="button" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon one"></span>
@@ -12,10 +21,38 @@
 		</div>
 		<div class="container navbar-hidden">
 			<div id="schools" style="padding-right: 0 !important;">
-				<a href="./" class="mt-3 menu-top py-2">
-				<i class="fa-duotone fa-house"></i> Tablero
+				<a href="./" class="mt-3 menu-top p-2 <?= setActiveClass('inicio', $pagina) ?>">
+					<i class="fa-duotone fa-house"></i> Tablero
+				</a>
+			
+			<?php if ($_SESSION["user"]['role'] == 'admin'):?>
+                
+				<a href="users" class="mt-3 menu-top p-2 ml-1 <?= setActiveClass('users', $pagina) ?>">
+					<i class="fa-duotone fa-users"></i> Usuarios
+				</a>
+				<a href="courses" class="mt-3 menu-top p-2 ml-1 <?= setActiveClass('courses', $pagina) ?>">
+					<i class="fa-duotone fa-school-flag"></i> Ciclo escolar
+				</a>
+				<a href="degrees" class="mt-3 menu-top p-2 ml-1 <?= setActiveClass('degrees', $pagina) ?>">
+					<i class="fad fa-graduation-cap"></i> Licenciaturas
+				</a>
+				<a href="areas" class="mt-3 menu-top p-2 ml-1 <?= setActiveClass('areas', $pagina) ?>">
+					<i class="fad fa-ball-pile"></i> Areas
+				</a>
+				<a href="events" class="mt-3 menu-top p-2 ml-1 <?= setActiveClass('events', $pagina) ?>">
+					<i class="fad fa-calendar"></i> Eventos
+				</a>
+				<a href="students" class="mt-3 menu-top p-2 ml-1 <?= setActiveClass('students', $pagina) ?>">
+					<i class="fad fa-user-graduate"></i> Estudiantes
 				</a>
 			</div>
+
+			<?php elseif ($_SESSION["user"]['role'] == 'teacher'): ?>
+				<a href="students" class="mt-3 menu-top p-2 ml-1 <?= setActiveClass('students', $pagina) ?>">
+					<i class="fad fa-user-graduate"></i> Estudiantes
+				</a>
+			</div>
+			<?php endif ?>
 		</div>
 	</nav>
 	
