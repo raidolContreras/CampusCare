@@ -1077,6 +1077,136 @@ class FormsModelPDF {
         return $texto.'.pdf'; // Devuelve el nombre del archivo PDF generado
         
     }
+    
+    static public function getAceptationCard($student, $degree) {
+        
+        $month = 6;
+        $fechaInicio = new DateTime();
+        $fechaTermino = clone $fechaInicio;
+
+        if ($degree['minPoints'] == 480) {
+            $month = 6;
+            $fechaTermino->modify('+6 months');
+        } else {
+            $month = 12;
+            $fechaTermino->modify('+12 months');
+        }
+        
+        $numeroATexto = numeroATexto($student['grado']);
+        $gradoAcademico = ($student['type_lic'] == 'cuatrimestral') ? $numeroATexto. ' cuatrimestre' : $numeroATexto. ' sementre';
+
+        // Configurar la localización para fechas en español
+        setlocale(LC_TIME, 'es_ES.UTF-8', 'es_ES', 'Spanish_Spain');
+
+        // Cargar el PDF original
+        $pdf = new Fpdi();
+
+        // Establecer márgenes más pequeños (0 para que no haya margen)
+        $pdf->SetMargins(45, 5, 20); // Izquierdo, Superior, Derecho
+
+        // Cargar el archivo PDF original
+        $pageCount = $pdf->setSourceFile(__DIR__ . '/../view/assets/documents/Carta_aceptacion.pdf');
+        $templateId = $pdf->importPage(1);
+        $size = $pdf->getTemplateSize($templateId);
+
+        // Añadir una página con el tamaño exacto del contenido
+        $pdf->AddPage($size['orientation'], array($size['width'], $size['height']));
+
+        // Usar la plantilla del PDF original con las dimensiones correctas
+        $pdf->useTemplate($templateId, 0, 0, $size['width'], $size['height']);
+
+        // Configurar la fuente para el texto
+        $pdf->SetFont('Helvetica', '', 12);
+
+        // Obtener la fecha actual en español
+        $fechaEmision = strftime('%d de %B de %Y'); // Ejemplo: "22 de agosto de 2024"
+
+        // Escribir la fecha
+        $pdf->SetXY(10, 25);
+        $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', "Morelia, Mich., a $fechaEmision."), 0, 1, 'R');
+
+        // Escribir "Asunto:"
+        $pdf->SetXY(99, 40);
+        $pdf->Write(10, iconv('UTF-8', 'ISO-8859-1', 'Asunto: '));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(10, iconv('UTF-8', 'ISO-8859-1', 'Carta de aceptación de Servicio Social.'));
+
+
+        // Escribir DSS-CASS
+        $pdf->SetXY(10, 50);
+        $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', "DSS-CASS-004-2024 DD"), 0, 1, 'R');
+
+        // Escribir los datos del destinatario
+        $pdf->SetXY(45, 68);
+        $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', "Lic. Luz Selene Archundia Sánchez"), 0, 1, 'L');
+        $pdf->SetXY(45, 73);
+        $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', "Subdirectora de Servicio Social y Pasantes"), 0, 1, 'L');
+        $pdf->SetXY(45, 78);
+        $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', "Instituto de la Juventud Michoacana"), 0, 1, 'L');
+
+        // Escribir "Presente"
+        $pdf->SetXY(45, 90);
+        $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', "Presente"), 0, 1, 'L');
+
+        // Restablecer la fuente normal
+        $pdf->SetFont('Helvetica', '', 12);
+        // Escribir el cuerpo de la carta
+        $texto = mb_strtoupper($student['firstname'] . ' ' . $student['lastname'] . ' ' . $student['lastnameMom'] . ' ');
+
+        $pdf->SetXY(45, 105);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', "En relación a la solicitud del alumno "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', $texto));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', ", quien concluyó el "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($gradoAcademico)));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', " de la LICENCIATURA EN "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', mb_strtoupper($degree['nameDegree'])));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', " de "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', "UNIVERSIDAD MONTRER"));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', ", con número de matrícula "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', $student['matricula']));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', ", me permito informarle que ha sido aceptado en este organismo receptor denominado: "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', "UNIVERSIDAD MONTRER"));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', ", para realizar el "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', "SERVICIO SOCIAL"));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', " y cubrir un total de "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', $degree['minPoints']));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', " HORAS en un periodo de "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', $month .' MESES'));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', " comprendido del "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', $fechaInicio->format('d')."/".$fechaInicio->format('m')."/".$fechaInicio->format('y')));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', " al "));
+        $pdf->SetFont('Helvetica', 'B', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', $fechaTermino->format('d')."/".$fechaTermino->format('m')."/".$fechaTermino->format('y')));
+        $pdf->SetFont('Helvetica', '', 12);
+        $pdf->Write(7, iconv('UTF-8', 'ISO-8859-1', ".
+
+Sin otro asunto en particular, agradezco de antemano la atención que se sirva brindar a nuestros alumnos, enviándole un cordial saludo."));
+
+        // Guardar el nuevo archivo PDF
+        $filename = 'Carta_de_aceptacion_' . $texto . '.pdf';
+        $pdf->Output('F', __DIR__ . '/../view/assets/documents/output/' . $filename);
+        return $filename;
+    }
 
 }
 

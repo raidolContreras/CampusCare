@@ -102,6 +102,9 @@ class FormsController {
         $student = FormsModel::mdlSearchStudents($student);
         if ($student) {
             $degree = FormsModel::mdlSearchDegrees($student['idDegree']);
+            
+            FormsModelPDF::getAceptationCard($student, $degree);
+
             return FormsModelPDF::mdlEndSocialService($student, $degree);
         }
     }

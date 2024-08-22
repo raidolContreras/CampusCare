@@ -427,9 +427,13 @@ function loadStudentDashboard(student) {
         let idStudent = $('#idStudent').val();
         $('#achievementModalLabel').text('¡Felicidades!');
         $('#achievementModalBody').html(`
-            <p>Has alcanzado el 100% de puntos. ¡Excelente trabajo!</p>
+            <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+                <p style="font-size: 16px; font-weight: bold; color: #01643D;">¡Enhorabuena! Has completado el 100% de los puntos requeridos. ¡Excelente desempeño!</p>
+                <p style="font-size: 14px; margin-top: 10px;">Por favor, haz clic en el botón a continuación para generar e imprimir los documentos necesarios. Una vez impresos y correctamente llenados, deberás entregarlos en la institución de Montrer al encargado de Servicio Social.</p>
+            </div>
+
             <div class="d-grid gap-2">
-                <button type="button" class="btn btn-success" onclick="endSocialService(${idStudent})">Iniciar trámites de finalización</button>
+                <button type="button" class="btn btn-success" onclick="endSocialService(${idStudent})">Iniciar trámites del servicio social</button>
             </div>
         `);
         $('#achievementModal').modal('show');
@@ -444,8 +448,6 @@ function endSocialService(idStudent) {
         data: { idStudent: idStudent, search: 'student', action: 'end social service' },
         dataType: 'json',
         success: function(response) {
-            // Verificar que response contiene la ruta del archivo
-            console.log('Server Response:', response);
             
             // Asumiendo que response contiene el nombre del archivo o la ruta relativa
             var filePath = './view/assets/documents/output/' + response;
@@ -457,6 +459,14 @@ function endSocialService(idStudent) {
             var link = document.createElement('a');
             link.href = filePath;
             link.download = response.split('/').pop(); // Obtener solo el nombre del archivo
+            link.click();
+            
+            filePath2 = './view/assets/documents/output/Carta_de_aceptacion_' + response;
+            console.log('File Path:', filePath2);
+            // Crear un enlace para descargar el archivo
+            var link = document.createElement('a');
+            link.href = filePath2;
+            link.download = 'Carta_de_aceptacion_'+response.split('/').pop(); // Obtener solo el nombre del archivo
             link.click();
         },
         error: function(xhr, status, error) {
