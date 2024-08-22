@@ -169,26 +169,26 @@ class FormsModel {
                                 
                                 <!-- Barra superior con logo -->
                                 <div style='background-color: #01643d; padding: 10px; text-align: center;'>
-                                <img src='https://campuscare.devosco.io/view/assets/images/logo.png' alt='UNIMO Logo' style='max-width: 150px;'>
+                                    <img src='https://campuscare.devosco.io/view/assets/images/logo.png' alt='UNIMO Logo' style='max-width: 150px;'>
                                 </div>
                             
                                 <!-- Contenido del correo -->
                                 <div style='padding: 20px;'>
-                                <p style='color: #01643d; font-size: 1.2em; font-weight: bold;'>Estimado/a Estudiante,</p>
-                                
-                                <p>Estimado estudiante, se ha creado un nuevo evento en el que puede participar. Este evento es: " . $eventName . ". Te recomendamos que te inscribas en él para continuar con tu servicio social.</p>
-                                
-                                <p>Te recomendamos que te inscribas en él para continuar con tu servicio social.</p>
-                                
-                                <p>Si tienes alguna pregunta adicional o necesitas más asistencia, no dudes en contactarnos.</p>
-                                
-                                <p>¡Que tengas un excelente día!</p>
+                                    <p style='color: #01643d; font-size: 1.2em; font-weight: bold;'>Estimado/a Estudiante,</p>
+                                    
+                                    <p>Estimado estudiante, se ha creado un nuevo evento en el que puede participar. Este evento es: " . $eventName . ". Te recomendamos que te inscribas en él para continuar con tu servicio social.</p>
+                                    
+                                    <p>Te recomendamos que te inscribas en él para continuar con tu servicio social.</p>
+                                    
+                                    <p>Si tienes alguna pregunta adicional o necesitas más asistencia, no dudes en contactarnos.</p>
+                                    
+                                    <p>¡Que tengas un excelente día!</p>
                                 </div>
                             
                                 <!-- Pie de página -->
                                 <div style='background-color: #f4f4f4; padding: 10px; text-align: center; color: #777777; font-size: 0.9em;'>
-                                Atentamente,<br>
-                                Universidad Montrer (UNIMO)
+                                    Atentamente,<br>
+                                    Universidad Montrer (UNIMO)
                                 </div>
                             </div>
                         </div>";
