@@ -158,6 +158,17 @@ class FormsModel {
     
         if($stmt->execute()) {
             $response = "success";
+            $students = self::mdlSearchStudents(null);
+            foreach($students as $student) {
+                $points = self::mdlStudentPoints($student['idStudent']);
+                if($points['totalPoints'] <= $points['degreeMinPoints']) {
+                    // Mensaje personalizado
+                    $message = "Estimado estudiante, se ha creado un nuevo evento en el que puede participar. Este evento es: " . $eventName . ". Te recomendamos que te inscribas en él para continuar con tu servicio social.";
+
+                    // Enviar correo
+                    mdlSendEmail($student['email'], $message);
+                }
+            }       
         } else {
             $response = "error";
         }
@@ -894,6 +905,29 @@ class FormsModel {
         $stmt = null;
         return $response;
     }
+
+    static public function mdlStudentPoints ($idStudent) {
+        $sql = "SELECT 
+                    SUM(se.points) as totalPoints,
+                    (SELECT d.minPoints 
+                    FROM degrees d 
+                    LEFT JOIN student s ON s.idDegree = d.idDegree 
+                    WHERE s.idStudent = :idStudent) as degreeMinPoints
+                FROM 
+                    students_events se 
+                LEFT JOIN 
+                    events e ON e.idEvent = se.idEvent 
+                WHERE 
+                    se.idStudent = :idStudent AND se.statusEvent = 1;";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idStudent", $idStudent, PDO::PARAM_INT);
+        $stmt->execute();
+        $response = $stmt->fetch();
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
 }
 class FormsModelPDF {
 
@@ -1227,4 +1261,48 @@ function numeroATexto($numero) {
     ];
 
     return isset($numerosEnTexto[$numero]) ? $numerosEnTexto[$numero] : $numero;
+}
+
+function mdlSendEmail($recipientEmail, $message) {
+    // Asunto del correo
+    $subject = "Nuevo Evento Disponible para Servicio Social";
+    
+    // Cabeceras del correo
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+    $headers .= "From: no-reply@unimontrer.edu.mx" . "\r\n";
+    
+    // Estructura del mensaje
+    $emailContent = "
+    <div style='font-family: Arial, sans-serif; line-height: 1.6; background-color: #f4f4f4; padding: 20px;'>
+      <div style='max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #dddddd; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden;'>
+        
+        <!-- Barra superior con logo -->
+        <div style='background-color: #01643d; padding: 10px; text-align: center;'>
+          <img src='https://campuscare.devosco.io/view/assets/images/logo.png' alt='UNIMO Logo' style='max-width: 150px;'>
+        </div>
+    
+        <!-- Contenido del correo -->
+        <div style='padding: 20px;'>
+          <p style='color: #01643d; font-size: 1.2em; font-weight: bold;'>Estimado/a Estudiante,</p>
+          
+          <p>$message</p>
+          
+          <p>Te recomendamos que te inscribas en él para continuar con tu servicio social.</p>
+          
+          <p>Si tienes alguna pregunta adicional o necesitas más asistencia, no dudes en contactarnos.</p>
+          
+          <p>¡Que tengas un excelente día!</p>
+        </div>
+    
+        <!-- Pie de página -->
+        <div style='background-color: #f4f4f4; padding: 10px; text-align: center; color: #777777; font-size: 0.9em;'>
+          Atentamente,<br>
+          Universidad Montrer (UNIMO)
+        </div>
+      </div>
+    </div>";
+    
+    // Enviar el correo
+    mail($recipientEmail, $subject, $emailContent, $headers);
 }
