@@ -161,7 +161,7 @@ class FormsModel {
             $students = self::mdlSearchStudents(null);
             foreach($students as $student) {
                 $points = self::mdlStudentPoints($student['idStudent']);
-                if($points['totalPoints'] < $points['degreeMinPoints']) {
+                if($points['totalPoints'] < $points['degreeMinPoints'] && $student['status'] == 1) {
                     // Mensaje personalizado
                     $message = "
                         <div style='font-family: Arial, sans-serif; line-height: 1.6; background-color: #f4f4f4; padding: 20px;'>
