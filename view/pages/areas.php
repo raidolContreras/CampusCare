@@ -26,7 +26,7 @@
             </div>
             <div class="modal-body">
                 <form id="addAreaForm">
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="addAreaName">Nombre del área</label>
                         <input type="text" class="form-control" id="addAreaName" required>
                     </div>
@@ -50,7 +50,7 @@
             <div class="modal-body">
                 <form id="editAreaForm">
                     <input type="hidden" id="editAreaId">
-                    <div class="form-group">
+                    <div class="form-group mb-3">
                         <label for="editAreaName">Nombre del área</label>
                         <input type="text" class="form-control" id="editAreaName" required>
                     </div>
@@ -72,7 +72,10 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>¿Estás seguro de que deseas eliminar esta área?</p>
+                <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; padding: 15px; background-color: #f8f9fa; border-radius: 5px;">
+                    <p style="font-size: 16px; font-weight: bold; color: #01643D;">¿Estás seguro de que deseas eliminar esta área?</p>
+                    <p style="font-size: 14px; margin-top: 10px;">esta acción es irreversible.</p>
+                </div>
                 <input type="hidden" id="deleteAreaId">
             </div>
             <div class="modal-footer">

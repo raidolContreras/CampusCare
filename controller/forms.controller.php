@@ -339,4 +339,12 @@ class FormsController {
     static public function ctrStudentEventsPoints($idStudent) {
         return FormsModel::mdlStudentEventsPoints($idStudent);
     }
+
+    static public function ctrEditDegree($data) {
+        return FormsModel::mdlEditDegree($data);
+    }
+
+    static public function ctrDeleteDegree($idDegree) {
+        return FormsModel::mdlDeleteDegree($idDegree);
+    }
 }

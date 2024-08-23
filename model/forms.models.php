@@ -176,7 +176,9 @@ class FormsModel {
                                 <div style='padding: 20px;'>
                                     <p style='color: #01643d; font-size: 1.2em; font-weight: bold;'>Estimado/a Estudiante,</p>
                                     
-                                    <p>Estimado estudiante, se ha creado un nuevo evento en el que puede participar. Este evento es: " . $eventName . ". Te recomendamos que te inscribas en él para continuar con tu servicio social.</p>
+                                    <p>Estimado estudiante, se ha creado un nuevo evento en el que puede participar. Este evento es: " . $eventName . ".</p>
+                                    <p>" . $description . "</p>
+                                    <p> Te recomendamos que te inscribas en él para continuar con tu servicio social.</p>
                                     
                                     <p>Te recomendamos que te inscribas en él para continuar con tu servicio social.</p>
                                     
@@ -193,8 +195,13 @@ class FormsModel {
                             </div>
                         </div>";
 
-                    // Enviar correo
-                    mdlSendEmail($student['email'], $message);
+                        $event_types = self::mdlSearchEventTypes($eventTypeId);
+
+                        // Asunto del correo
+                        $subject = "Nuevo evento disponible para Servicio Social | " . $event_types['name'];
+
+                        // Enviar correo
+                        mdlSendEmail($student['email'], $message, $subject);
                 }
             }       
         } else {
@@ -956,7 +963,43 @@ class FormsModel {
         $stmt = null;
         return $response;
     }
+
+    static public function mdlEditDegree($data) {
+        $sql = "UPDATE degrees SET nameDegree=:nameDegree,minPoints=:minPoints WHERE idDegree = :idDegree";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":nameDegree", $data['nameDegree'], PDO::PARAM_STR);
+        $stmt->bindParam(":minPoints", $data['minPoints'], PDO::PARAM_INT);
+        $stmt->bindParam(":idDegree", $data['idDegree'], PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
+
+    static public function mdlDeleteDegree($idDegree) {
+        $sql = "DELETE FROM degrees WHERE idDegree = :idDegree";
+        $stmt = Conexion::conectar()->prepare($sql);
+        $stmt->bindParam(":idDegree", $idDegree, PDO::PARAM_INT);
+        
+        if($stmt->execute()) {
+            $response = "success";
+        } else {
+            $response = "error";
+        }
+        
+        $stmt->closeCursor();
+        $stmt = null;
+        return $response;
+    }
 }
+
+
 class FormsModelPDF {
 
     static public function mdlEndSocialService($student, $degree) {// Cargar el PDF original
@@ -1291,9 +1334,7 @@ function numeroATexto($numero) {
     return isset($numerosEnTexto[$numero]) ? $numerosEnTexto[$numero] : $numero;
 }
 
-function mdlSendEmail($recipientEmail, $message) {
-    // Asunto del correo
-    $subject = "Nuevo Evento Disponible para Servicio Social";
+function mdlSendEmail($recipientEmail, $message, $subject) {
     
     // Cabeceras del correo
     $headers = "MIME-Version: 1.0" . "\r\n";

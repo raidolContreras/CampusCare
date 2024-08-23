@@ -23,8 +23,8 @@ $(document).ready(function() {
                 render: function (data, type, row) {
                     return `
                         <div class="btn-group btn-block" role="group" aria-label="Acciones">
-                            <button type="button" class="btn btn-primary" onclick="editUser(${data.idStudent})"><i class="fad fa-edit"></i></button>
-                            <button type="button" class="btn btn-danger" onclick="deleteUser(${data.idStudent})"><i class="fad fa-trash-alt"></i></button>
+                            <button type="button" class="btn btn-primary" onclick="editDegree(${data.idDegree})"><i class="fad fa-edit"></i></button>
+                            <button type="button" class="btn btn-danger" onclick="deleteDegree(${data.idDegree})"><i class="fad fa-trash-alt"></i></button>
                         </div>`;
                 }
             }
@@ -57,3 +57,59 @@ $('#licenciaturaForm').on('submit', function(event) {
         }
     });
 });
+
+function editDegree(idDegree) {
+    $.ajax({
+        url: 'controller/ajax/ajax.forms.php',
+        type: 'POST',
+        data: { search: 'degrees', idDegree: idDegree },
+        success: function(response) {
+            response = JSON.parse(response);
+            $('#editDegreeModal').modal('show');
+            $('#editDegreeName').val(response.nameDegree);
+            $('#editDegreeMinPoints').val(response.minPoints);
+        }
+    });
+
+    $('.editLicenciaturaForm').on('click', function() {
+        event.preventDefault();
+        $.ajax({
+            url: 'controller/ajax/ajax.forms.php',
+            type: 'POST',
+            data: {
+                search: 'degrees',
+                action: 'editDegree',
+                idDegree: idDegree,
+                nameDegree: $('#editDegreeName').val(),
+                minPoints: $('#editDegreeMinPoints').val(),
+            },
+            success: function(response) {
+                if (response ==='"success"') {
+                    alert('Licenciatura editada correctamente');
+                    $('#editDegreeModal').modal('hide');
+                    $('#degreesTable').DataTable().ajax.reload();
+                } else {
+                    alert('Error al editar la licenciatura');
+                }
+            }
+        });
+    });
+}
+
+function deleteDegree (idDegree) {
+    if (confirm('¿Estás seguro de que quieres eliminar esta licenciatura?')) {
+        $.ajax({
+            url: 'controller/ajax/ajax.forms.php',
+            type: 'POST',
+            data: { idDegree: idDegree, search: 'degrees', action: 'deleteDegree' },
+            success: function(response) {
+                if (response === '"success"') {
+                    alert('Licenciatura eliminada correctamente');
+                    $('#degreesTable').DataTable().ajax.reload();
+                } else {
+                    alert('Error al eliminar la licenciatura');
+                }
+            }
+        });
+    }
+}

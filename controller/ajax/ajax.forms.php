@@ -203,7 +203,20 @@ if (isset($_POST['search'])) {
     if ($_POST['search'] == 'degrees') {
         $degree = (isset($_POST['idDegree']))? $_POST['idDegree'] : null;
         $searchDegrees = new FormsController();
-        $degrees = $searchDegrees->ctrSearchDegrees($degree);
+        if (isset($_POST['action'])) {
+            if ($_POST['action'] == 'editDegree') {
+                $data = array(
+                    'idDegree' => $degree,
+                    'nameDegree' => $_POST['nameDegree'],
+                    'minPoints' => $_POST['minPoints']
+                );
+                $degrees = $searchDegrees->ctrEditDegree($data);
+            } elseif ($_POST['action'] == 'deleteDegree') {
+                $degrees = $searchDegrees->ctrDeleteDegree($degree);
+            }
+        } else {
+            $degrees = $searchDegrees->ctrSearchDegrees($degree);
+        }
         echo json_encode($degrees);
     }
 

@@ -9617,7 +9617,7 @@ body {
 
 .bg-info {
   --bs-bg-opacity: 1;
-  background-color: rgba(var(--bs-info-rgb), var(--bs-bg-opacity)) !important;
+  background-color: #111 !important;
 }
 
 .bg-warning {
@@ -15421,15 +15421,6 @@ body {
   border: none; /* Sin borde */
 }
 
-/* Ajustes para el formulario dentro del modal */
-.form-control {
-  /* margin-bottom: 1rem; */
-  /* background-color: #EFEFEF; */
-  /* padding: 5px 15px; */
-  /* border-radius: 20px; */
-  color: #ABABAB;
-}
-
 .form-control:hover,
 .form-control:active,
 .form-control:focus {
@@ -15437,13 +15428,6 @@ body {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
-
-/* .form-control {
-  font-size: 16px;
-  height: 52px;
-  padding-left: 15px;
-  padding-right: 15px;
-} */
 
 .center-buttons{
   display: flex; /* Establecer flexbox para alineación de elementos */
